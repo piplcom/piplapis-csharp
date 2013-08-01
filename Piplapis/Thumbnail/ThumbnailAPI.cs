@@ -26,6 +26,8 @@ namespace Pipl.APIs.Thumbnail
     public class ThumbnailAPI
     {
         public static string BASE_URL = "http://api.pipl.com/thumbnail/v2/?";
+        // HTTPS is also supported:
+        //public static string BASE_URL = "https://api.pipl.com/thumbnail/v2/?";
         public static String defaultApiKey = null;
 	    public static int MAX_PIXELS = 500;
 

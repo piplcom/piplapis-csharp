@@ -20,6 +20,8 @@ namespace Pipl.APIs.Name
     public class NameAPIRequest
     {
         public static string BASE_URL = "http://api.pipl.com/name/v2/json/?";
+        // HTTPS is also supported:
+        //public static string BASE_URL = "https://api.pipl.com/name/v2/json/?";
         public static string defaultApiKey = null;
 
         public string ApiKey { get; set; }

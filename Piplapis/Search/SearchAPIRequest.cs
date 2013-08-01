@@ -32,6 +32,8 @@ namespace Pipl.APIs.Search
         private List<string> FilterRecordsBy { get; set; }
         private List<string> PrioritizeRecordsBy { get; set; }
         public static string BASE_URL = "http://api.pipl.com/search/v3/json/?";
+        // HTTPS is also supported:
+        //public static string BASE_URL = "https://api.pipl.com/search/v3/json/?";
         public static String defaultApiKey = null;
 
         /**
