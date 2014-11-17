@@ -64,12 +64,6 @@
     <Compile Include="Data\Fields\Username.cs" />
     <Compile Include="Data\Source.cs" />
     <Compile Include="Data\Utils.cs" />
-    <Compile Include="Name\AgeStats.cs" />
-    <Compile Include="Name\AltNames.cs" />
-    <Compile Include="Name\LocationStats.cs" />
-    <Compile Include="Name\NameAPIError.cs" />
-    <Compile Include="Name\NameAPIRequest.cs" />
-    <Compile Include="Name\NameAPIResponse.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\SearchAPICallBack.cs" />
     <Compile Include="Search\SearchAPIError.cs" />

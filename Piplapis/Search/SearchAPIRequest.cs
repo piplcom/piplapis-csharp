@@ -8,6 +8,7 @@ using Pipl.APIs.Data.Fields;
 using System.Web;
 using System.Text;
 using System.IO;
+using System.Collections.Specialized;
 
 namespace Pipl.APIs.Search
 {
@@ -370,16 +371,35 @@ namespace Pipl.APIs.Search
         {
             get
             {
-                return String.Format("{0}key={1}&person={2}&query_params_mode={3}&exact_name={4}&prioritize_records_by={5}&filter_records_by={6}",
-                    BASE_URL,
-                    Uri.EscapeDataString((String.IsNullOrEmpty(ApiKey) ? SearchAPIRequest.defaultApiKey : ApiKey)),
-                    Uri.EscapeDataString(JsonConvert.SerializeObject(Person, Formatting.None, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore })),
-                    Uri.EscapeDataString(QueryParamsMode),
-                    Uri.EscapeDataString(ExactName.ToString()),
-                    Uri.EscapeDataString(String.Join(",", PrioritizeRecordsBy)),
-                    Uri.EscapeDataString(String.Join(",", FilterRecordsBy)));
+                return BASE_URL;
             }
         }
+
+
+        /**
+         * The parameters of the request (as a NameValueCollection).
+         *
+         * @return Collection of the request's parameters
+         * @throws IOException
+         */
+        [JsonIgnore]
+        public NameValueCollection UrlParams
+        {
+            get
+            {
+                NameValueCollection Params = new NameValueCollection();
+
+                Params.Add("key", (String.IsNullOrEmpty(ApiKey) ? SearchAPIRequest.defaultApiKey : ApiKey));
+                Params.Add("person", JsonConvert.SerializeObject(Person, Formatting.None, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
+                Params.Add("query_params_mode", QueryParamsMode);
+                Params.Add("exact_name", ExactName.ToString());
+                Params.Add("prioritize_records_by", String.Join(",", PrioritizeRecordsBy));
+                Params.Add("filter_records_by", String.Join(",", FilterRecordsBy));
+
+                return Params;
+            }
+        }
+
 
         /**
          * Send the request and return the response or raise SearchAPIError.
@@ -395,6 +415,7 @@ namespace Pipl.APIs.Search
          * @throws IOException              IOException
          * @throws SearchAPIError           SearchAPIError (when the response is returned but contains an error).
          */
+
         public SearchAPIResponse Send(bool strictValidation = true)
         {
             validateQueryParams(strictValidation);
@@ -404,10 +425,10 @@ namespace Pipl.APIs.Search
                 HttpWebResponse response;
                 try
                 {
-                    string responseBody = client.DownloadString(Url);
+                    string responseBody = System.Text.Encoding.UTF8.GetString(client.UploadValues(Url, UrlParams));
                     return JsonConvert.DeserializeObject<SearchAPIResponse>(responseBody);
                 }
-                catch (WebException we)
+                    catch (WebException we)
                 {
                     contextException = we;
                     response = (HttpWebResponse) we.Response;
@@ -464,20 +485,21 @@ namespace Pipl.APIs.Search
             validateQueryParams(strictValidation);
             using (WebClient client = new WebClient())
             {
-                Uri uri = new Uri(Url);
-                client.DownloadStringCompleted +=
-                    new DownloadStringCompletedEventHandler(SearchDownloadStringCompletedEventHandler);
 
-                client.DownloadStringAsync(uri, searchAPICallBack);
+                Uri uri = new Uri(Url);
+                client.UploadValuesCompleted += new UploadValuesCompletedEventHandler(SearchUploadValuesCompletedEventHandler);
+                client.UploadValuesAsync(uri, null, UrlParams, searchAPICallBack);
+
             }
         }
 
-        public void SearchDownloadStringCompletedEventHandler(object sender, DownloadStringCompletedEventArgs e)
+        void SearchUploadValuesCompletedEventHandler(object sender, UploadValuesCompletedEventArgs e)
         {
-            var searchApiCallBack = (SearchAPICallBack)e.UserState;
+
+          var searchApiCallBack = (SearchAPICallBack)e.UserState;
             if (e.Error == null)
             {
-                searchApiCallBack.callback(JsonConvert.DeserializeObject<SearchAPIResponse>(e.Result));
+                searchApiCallBack.callback(JsonConvert.DeserializeObject<SearchAPIResponse>(System.Text.Encoding.UTF8.GetString(e.Result)));
                 return;
             }
             if (!(e.Error is WebException))
