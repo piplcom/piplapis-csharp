@@ -8,8 +8,8 @@
     <ProjectGuid>{E9921187-C395-422D-844A-6136C55CD6BC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>piplapi</RootNamespace>
-    <AssemblyName>piplapi</AssemblyName>
+    <RootNamespace>piplapis</RootNamespace>
+    <AssemblyName>piplapis</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -33,12 +33,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Web" />
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
@@ -46,34 +46,49 @@
     <Compile Include="APIError.cs" />
     <Compile Include="Data\Containers\FieldsContainer.cs" />
     <Compile Include="Data\Containers\Person.cs" />
-    <Compile Include="Data\Containers\Record.cs" />
+    <Compile Include="Data\Containers\Source.cs" />
+    <Compile Include="Data\Enums\AddressTypes.cs" />
+    <Compile Include="Data\Enums\EmailTypes.cs" />
+    <Compile Include="Data\Enums\EthnicityTypes.cs" />
+    <Compile Include="Data\Enums\GenderTypes.cs" />
+    <Compile Include="Data\Enums\NameTypes.cs" />
+    <Compile Include="Data\Enums\PhoneTypes.cs" />
+    <Compile Include="Data\Enums\RelationshipTypes.cs" />
+    <Compile Include="Data\Enums\SourceCategories.cs" />
     <Compile Include="Data\Fields\Address.cs" />
     <Compile Include="Data\Fields\DOB.cs" />
     <Compile Include="Data\Fields\DateRange.cs" />
     <Compile Include="Data\Fields\Education.cs" />
     <Compile Include="Data\Fields\Email.cs" />
+    <Compile Include="Data\Fields\Ethnicity.cs" />
     <Compile Include="Data\Fields\Field.cs" />
+    <Compile Include="Data\Fields\Gender.cs" />
     <Compile Include="Data\Fields\Image.cs" />
     <Compile Include="Data\Fields\Job.cs" />
+    <Compile Include="Data\Fields\Language.cs" />
     <Compile Include="Data\Fields\Name.cs" />
+    <Compile Include="Data\Fields\OriginCountry.cs" />
     <Compile Include="Data\Fields\Phone.cs" />
-    <Compile Include="Data\Fields\RelatedURL.cs" />
-    <Compile Include="Data\Fields\Relationship.cs" />
+    <Compile Include="Data\Containers\Relationship.cs" />
     <Compile Include="Data\Fields\Tag.cs" />
+    <Compile Include="Data\Fields\URL.cs" />
     <Compile Include="Data\Fields\UserID.cs" />
     <Compile Include="Data\Fields\Username.cs" />
-    <Compile Include="Data\Source.cs" />
     <Compile Include="Data\Utils.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Search\SearchAPICallBack.cs" />
     <Compile Include="Search\SearchAPIError.cs" />
     <Compile Include="Search\SearchAPIRequest.cs" />
+    <Compile Include="Search\RequestConfiguration.cs" />
     <Compile Include="Search\SearchAPIResponse.cs" />
-    <Compile Include="Thumbnail\ThumbnailAPI.cs" />
+    <Compile Include="Search\ShowSources.cs" />
+    <Compile Include="Utils\EnumExtensions.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
+    <None Include="packages.config">
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
