@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
+using Pipl.APIs.Data.Enums;
+using Pipl.APIs.Utils;
 
 namespace Pipl.APIs.Data.Fields
 {
@@ -21,25 +23,17 @@ namespace Pipl.APIs.Data.Fields
         [JsonProperty("extension")]
         public int? Extension { get; set; }
 
+        [JsonProperty("raw")]
+        public string Raw { get; set;}
+
         [JsonProperty("display")]
         public string Display { get; private set; }
 
         [JsonProperty("display_international")]
         public string DisplayInternational { get; private set; }
 
-        private static readonly HashSet<string> types = new HashSet<string> { "mobile", "home_phone", "home_fax", "work_phone", "work_fax", "pager" };
-        private static readonly string myName = typeof(Phone).Name;
         [JsonProperty("@type")]
-        private String type;
-        public String Type
-        {
-            set
-            {
-                ValidateType(value, types, myName);
-                this.type = value;
-            }
-            get { return type; }
-        }
+        public PhoneTypes? Type { get; set; }
 
         /**
          * @param validSince
@@ -54,15 +48,18 @@ namespace Pipl.APIs.Data.Fields
          * @param type
          *            type is one of "mobile", "home_phone", "home_fax",
          *            "work_phone" , "pager".
+         * @param raw
+         *            `raw` is an unparsed phone
          */
         public Phone(int? countryCode = null, long? number = null, int? extension = null,
-                string type = null, DateTime? validSince = null)
+                PhoneTypes? type = null, string raw = null, DateTime? validSince = null)
             : base(validSince)
         {
             this.CountryCode = countryCode;
             this.Number = number;
             this.Extension = extension;
             this.Type = type;
+            this.Raw = raw;
         }
 
         /**
@@ -76,34 +73,51 @@ namespace Pipl.APIs.Data.Fields
         {
             get
             {
-                return Number != null && (CountryCode == null || CountryCode == 0 || CountryCode == 1);
+                return (!string.IsNullOrEmpty(Raw)) || 
+                       (Number != null && (CountryCode == null || CountryCode == 0 || CountryCode == 1));
             }
         }
 
-        private static Regex regexObj = new Regex(@"[^\d]");
-
         /**
-         * Strip `text` from all non-digit chars and return a new Phone object with
-         * the number from text.
-         * 
-         * @param text
-         *            String to be parsed
-         * @return <code>Phone</code> object example :
-         *         <p/>
-         *         <blockquote>
-         * 
-         *         <pre>
-         * Phone phone = Phone.FromText("(888) 777-666");
-         * </pre>
-         * 
-         *         </blockquote>
-         *         <p/>
-         *         phone.number will be - 888777666
+         * Sets the Raw number to be the input text 
          */
         public static Phone FromText(string text)
         {
-            long number = Convert.ToInt64(regexObj.Replace(text, string.Empty));
-            return new Phone(number: number);
+            var res = new Phone
+            {
+                Raw = text
+            };
+
+            return res;
+        }
+
+        public override string ToString()
+        {
+            string str;
+            List<string> vals = new List<string>();
+
+            if (this.CountryCode != null)
+                vals.Add(this.CountryCode.ToString());
+            if (this.Number != null)
+                vals.Add(this.Number.ToString());
+            if (this.Extension != null)
+                vals.Add(this.Extension.ToString());
+
+            str = String.Join("-", vals);
+
+            vals.Clear();
+
+            if (!String.IsNullOrEmpty(str))
+                vals.Add(str);
+
+            if (!String.IsNullOrEmpty(this.Raw))
+                vals.Add(this.Raw);
+            if (this.Type != null)
+                vals.Add(EnumExtensions.JsonEnumName(Type.Value));
+
+            str = String.Join(", ", vals);
+
+            return str;
         }
     }
 }

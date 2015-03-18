@@ -43,32 +43,33 @@ namespace Pipl.APIs.Data.Fields
     {
         [JsonProperty("start")]
         [JsonConverter(typeof(YearOnlyDateTimeConverter))]
-        public DateTime Start { get; set; }
+        public DateTime? Start { get; set; }
 
         [JsonProperty("end")]
         [JsonConverter(typeof(YearOnlyDateTimeConverter))]
-        public DateTime End { get; set; }
+        public DateTime? End { get; set; }
 
         /**
-         * `start` and `end` are <code>DateTime</code> objects, both are required.
+         * `start` and `end` are <code>DateTime?</code> objects, at least one of them is required.
          * <p/>
          * For creating a DateRange object for an exact DateTime (like if exact
          * DateTime-of-birth is known) just pass the same value for `start` and `end`.
          *
-         * @param start start DateTime
-         * @param end   end DateTime
+         * @param start     start DateTime?
+         * @param end       end DateTime?
          */
-        public DateRange(DateTime start = default(DateTime), DateTime end = default(DateTime))
+        public DateRange(DateTime? start = null, DateTime? end = null)
         {
-            if (start < end)
-            {
-                this.Start = start;
-                this.End = end;
-            }
-            else
+            // if start is bigger than end, switch them
+            if (start != null && end != null && start > end)
             {
                 this.Start = end;
                 this.End = start;
+            }
+            else
+            {
+                this.Start = start;
+                this.End = end;
             }
         }
 
@@ -83,7 +84,7 @@ namespace Pipl.APIs.Data.Fields
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != typeof (DateRange)) return false;
+            if (obj.GetType() != typeof(DateRange)) return false;
             return Equals((DateRange) obj);
         }
 
@@ -113,36 +114,40 @@ namespace Pipl.APIs.Data.Fields
             }
         }
 
-
         /**
          * @return The Middle of the DateTime range (a DateTime object).
          *         return self.start + (self.end - self.start) / 2
+         *         If one of the dates is null (start or end), return the non-null value
          */
         [JsonIgnore]
         public DateTime Middle
         {
             get
             {
-                Int64 t1 = Start.Ticks;
-                Int64 t2 = End.Ticks;
+                if (Start == null) return (DateTime)End;
+                if (End == null) return (DateTime)Start;
+
+                Int64 t1 = ((DateTime)Start).Ticks;
+                Int64 t2 = ((DateTime)End).Ticks;
+
                 return new DateTime(t1 + (t2 - t1) / 2);
             }
         }
 
-
         /**
-         * @return A tuple of two ints - the year of the start DateTime and the year of the
-         *         end DateTime.
+         * @return A tuple of two ints - the year of the start DateTime and the year of the end DateTime.
+         *         If one of them is null (start or end), return the non-null value in both parts of the tuple
          */
         [JsonIgnore]
         public Tuple<int, int> YearsRange
         {
             get
             {
-                return new Tuple<int, int>(Start.Year, End.Year);
+                return new Tuple<int, int>(
+                    (Start != null) ? ((DateTime)Start).Year : ((DateTime)End).Year, 
+                    (End != null) ? ((DateTime)End).Year : ((DateTime)Start).Year);
             }
         }
-
 
         /**
          * Transform a range of years (two ints) to a DateRange object.

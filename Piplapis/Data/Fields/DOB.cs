@@ -104,13 +104,12 @@ namespace Pipl.APIs.Data.Fields
                 }
                 else
                 {
-                    int x1 = DOB.FromBirthDate(DateRange.End).Age;
-                    int x2 = DOB.FromBirthDate(DateRange.Start).Age;
+                    int x1 = (DateRange.End != null) ? DOB.FromBirthDate((DateTime)DateRange.End).Age : DOB.FromBirthDate((DateTime)DateRange.Start).Age;
+                    int x2 = (DateRange.Start != null) ? DOB.FromBirthDate((DateTime)DateRange.Start).Age : DOB.FromBirthDate((DateTime)DateRange.End).Age;
                     return new Tuple<int, int>(x1, x2);
                 }
             }
         }
-
 
         /**
          * Take a person's birth year (int) and return a new DOB object
@@ -119,7 +118,6 @@ namespace Pipl.APIs.Data.Fields
          * @param birthYear
          * @return <code>DOB</code> object
          */
-
         public static DOB FromBirthYear(int birthYear)
         {
             if (birthYear < 0)
@@ -128,7 +126,6 @@ namespace Pipl.APIs.Data.Fields
             }
             return new DOB(dateRange: DateRange.FromYearsRange(birthYear, birthYear));
         }
-
 
         /**
          * Take a person's birth date <code>DateTime</code> and return a new DOB
@@ -146,7 +143,6 @@ namespace Pipl.APIs.Data.Fields
             return new DOB(dateRange: new DateRange(birthDate, birthDate));
         }
 
-
         /**
          * Take a person's Age (int) and return a new DOB object
          * suitable for him.
@@ -154,11 +150,10 @@ namespace Pipl.APIs.Data.Fields
          * @param Age Age
          * @return <code>DOB</code> object
          */
-        public static DOB fromAge(int age)
+        public static DOB FromAge(int age)
         {
             return DOB.FromAgeRange(age, age);
         }
-
 
         /**
          * Take a person's minimal and maximal Age and return a new DOB object

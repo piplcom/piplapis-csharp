@@ -22,5 +22,12 @@ namespace Pipl.APIs.Data.Fields
         {
             this.Content = content;
         }
+
+        public override string ToString()
+        {
+            if (String.IsNullOrEmpty(this.Content))
+                return "";
+            return this.Content;
+        }
     }
 }

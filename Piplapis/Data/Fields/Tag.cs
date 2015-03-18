@@ -39,5 +39,10 @@ namespace Pipl.APIs.Data.Fields
             this.Content = content;
             this.Classification = classification;
 	    }
+
+        public override string ToString()
+        {
+            return Content + ", " + Classification;
+        }
     }
 }

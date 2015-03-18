@@ -14,17 +14,13 @@ namespace Pipl.APIs.Data.Fields
         [JsonProperty("@valid_since")]
         public DateTime? ValidSince { get; set; }
 
-        public Field(DateTime? validSince = null)
+        [JsonProperty("@inferred")]
+        public bool? Inferred { get; set; }
+
+        public Field(DateTime? validSince = null, bool? inferred = null)
         {
             this.ValidSince = validSince;
-        }
-
-        protected static void ValidateType(string type, HashSet<string> types, string classType)
-        {
-            if (!String.IsNullOrEmpty(type) && !types.Contains(type.ToLower()))
-            {
-                throw new ArgumentException("Invalid Type for " + classType + ": " + type);
-            }
+            this.Inferred = inferred;
         }
 
         /**

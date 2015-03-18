@@ -48,15 +48,17 @@ namespace Pipl.APIs
 	    /**
 	     * @return A bool that indicates whether the error is on the user's side.
 	     */
-	    public bool isUserError() {
+	    public bool IsUserError() 
+        {
             return 400 <= HttpStatusCode && HttpStatusCode < 500;
 	    }
 
 	    /**
 	     * @return A bool that indicates whether the error is on Pipl's side.
 	     */
-	    public bool isPiplError() {
-		    return !isUserError();
+	    public bool IsPiplError() 
+        {
+		    return !IsUserError();
 	    }
     }
 }

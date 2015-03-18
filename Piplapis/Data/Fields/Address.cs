@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
+using Pipl.APIs.Data.Enums;
 
 namespace Pipl.APIs.Data.Fields
 {
@@ -32,23 +33,17 @@ namespace Pipl.APIs.Data.Fields
         [JsonProperty("apartment")]
         public string Apartment { get; set; }
 
+        [JsonProperty("zip_code")]
+        public string ZipCode { get; set; }
+
         [JsonProperty("raw")]
         public string Raw { get; set; }
 
-        private static readonly HashSet<string> types = new HashSet<string> { "home", "work", "old" };
-        private static readonly string myName = typeof(Address).Name;
-
         [JsonProperty("@type")]
-        private string type;
-        public string Type
-        {
-            get { return type; }
-            set
-            {
-                ValidateType(value, types, myName);
-                this.type = value;
-            }
-        }
+        public AddressTypes? Type { get; set; }
+
+        [JsonProperty("display")]
+        public string Display { get; private set; }
 
         /**
          * @param country
@@ -78,13 +73,15 @@ namespace Pipl.APIs.Data.Fields
          *            unparsed address.
          * @param type
          *            Type is one of "home", "work", "old"
+         * @param zip_code
+         *            ZipCode
          * @param validSince
          *            `validSince` is a <code>DateTime</code> object, it's the first
          *            time Pipl's crawlers found this data on the page.
          */
         public Address(string country = null, string state = null, string city = null, string poBox = null,
                 string street = null, string house = null, string apartment = null, string raw = null,
-                string type = null, DateTime? validSince = null)
+                AddressTypes? type = null, string zip_code = null, DateTime? validSince = null)
             : base(validSince)
         {
             this.Country = country;
@@ -96,45 +93,12 @@ namespace Pipl.APIs.Data.Fields
             this.Apartment = apartment;
             this.Raw = raw;
             this.Type = type;
+            this.ZipCode = zip_code;
         }
 
-        [JsonProperty("display")]
-        public string Display
+        public override string ToString()
         {
-            get
-            {
-                string disp = "";
-                List<string> vals = new List<string>();
-
-                if (!String.IsNullOrEmpty(this.Street)) vals.Add(this.Street);
-
-                if (!String.IsNullOrEmpty(this.City)) vals.Add(this.City);
-
-                string state = String.IsNullOrEmpty(this.City) ? StateFull : this.State;
-                if (!String.IsNullOrEmpty(state)) vals.Add(state);
-
-                string country = String.IsNullOrEmpty(this.State) ? CountryFull : this.Country;
-                if (!String.IsNullOrEmpty(country)) vals.Add(country);
-
-                disp += String.Join(", ", vals);
-
-                vals.Clear();
-                if (!String.IsNullOrEmpty(this.Street))
-                {
-                    if (!String.IsNullOrEmpty(this.House)) vals.Add(this.House);
-                    if (!String.IsNullOrEmpty(this.Apartment)) vals.Add(this.Apartment);
-                    string prefix = String.Join("-", vals);
-                    vals.Clear();
-                    if (!String.IsNullOrEmpty(prefix)) vals.Add(prefix);
-                    if (!String.IsNullOrEmpty(disp)) vals.Add(disp);
-                    disp = String.Join(" ", vals);
-                }
-                else if (!String.IsNullOrEmpty(this.PoBox))
-                {
-                    disp = "P.O. Box " + this.PoBox + (String.IsNullOrEmpty(disp) ? "" : " ") + disp;
-                }
-                return disp;
-            }
+            return Display;
         }
 
         /**
@@ -146,7 +110,8 @@ namespace Pipl.APIs.Data.Fields
         {
             get
             {
-                return (!String.IsNullOrEmpty(Raw) || (IsValidCountry &&
+                return (!String.IsNullOrEmpty(Raw) || 
+                    (IsValidCountry && 
                     (String.IsNullOrEmpty(this.State) || IsValidState)));
             }
 
@@ -162,7 +127,7 @@ namespace Pipl.APIs.Data.Fields
             get
             {
                 return !String.IsNullOrEmpty(Country)
-                        && Utils.COUNTRIES.ContainsKey(Country.ToUpper());
+                        && Utils.Countries.ContainsKey(Country.ToUpper());
             }
         }
 
@@ -176,9 +141,9 @@ namespace Pipl.APIs.Data.Fields
             get
             {
                 return IsValidCountry
-                    && Utils.STATES.ContainsKey(Country.ToUpper())
+                    && Utils.States.ContainsKey(Country.ToUpper())
                     && !String.IsNullOrEmpty(State)
-                    && Utils.STATES[Country.ToUpper()].ContainsKey(State.ToUpper());
+                    && Utils.States[Country.ToUpper()].ContainsKey(State.ToUpper());
             }
 
         }
@@ -205,7 +170,7 @@ namespace Pipl.APIs.Data.Fields
             get
             {
                 if (!IsValidCountry) return null;
-                return Utils.COUNTRIES[Country.ToUpper()];
+                return Utils.Countries[Country.ToUpper()];
             }
         }
 
@@ -231,7 +196,7 @@ namespace Pipl.APIs.Data.Fields
             get
             {
                 if (IsValidState)
-                    return Utils.STATES[Country.ToUpper()][State.ToUpper()];
+                    return Utils.States[Country.ToUpper()][State.ToUpper()];
                 return null;
             }
         }

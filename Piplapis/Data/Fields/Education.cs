@@ -20,6 +20,9 @@ namespace Pipl.APIs.Data.Fields
         [JsonProperty("date_range")]
         public DateRange DateRange { get; set; }
 
+        [JsonProperty("display")]
+        public string Display { get; private set; }
+
         /**
          * @param validSince `validSince` is a <code>DateTime</code> object, it's the first time Pipl's
          *                   crawlers found this data on the page.
@@ -36,30 +39,9 @@ namespace Pipl.APIs.Data.Fields
             this.DateRange = dateRange;
         }
 
-        [JsonProperty("display")]
-        public string Display
+        public override string ToString()
         {
-            get
-            {
-                string result = "";
-                if (!string.IsNullOrEmpty(this.Degree) && !string.IsNullOrEmpty(this.School))
-                {
-                    result = this.Degree + " from " + this.School;
-                }
-                else if (!string.IsNullOrEmpty(this.Degree))
-                {
-                    result = this.Degree;
-                }
-                else if (!string.IsNullOrEmpty(this.School))
-                {
-                    result = this.School;
-                }
-                if (!string.IsNullOrEmpty(result) && this.DateRange != null)
-                {
-                    result = result + " (" + this.DateRange.YearsRange.Item1 + "-" + this.DateRange.YearsRange.Item2 + ") ";
-                }
-                return result.Trim();
-            }
+            return Display;
         }
     }
 }

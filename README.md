@@ -3,8 +3,8 @@ piplapis .NET (C#) Library
 
 This is a .NET client library for easily integrating Pipl's APIs into your application.
 
-* Full details about Pipl's APIs - [http://dev.pipl.com](http://dev.pipl.com)  
-* This library is available in other languages - [http://dev.pipl.com/docs/libraries](http://dev.pipl.com/docs/libraries)
+* Full details about Pipl's People Data API - [http://pipl.com/dev](http://pipl.com/dev)  
+* This library is available in other languages - [http://pipl.com/dev/guide/code_libraries](http://pipl.com/dev/guide/code_libraries)
 
 Library Requirements
 --------------------
@@ -15,15 +15,16 @@ Library Requirements
 Installation
 ------------
 
-* Simply build the source code. The solution file is `PiplApisProd.sln`, and the default target folder is `bin/debug` or `bin/release`, according to the build's configuration.
+```
+PM> Install-Package piplapis
+```
+
+* Or simply build the source code. The solution file is `PiplApisProd.sln`, and the default target folder is `bin/debug` or `bin/release`, according to the build's configuration.
 
 Getting Started & Code Snippets
 -------------------------------
 
 **Pipl's Search API**
-* Getting started tutorial - [http://dev.pipl.com/docs/search_api/getstarted](http://dev.pipl.com/docs/search_api/getstarted)  
-* Code snippets - [http://dev.pipl.com/docs/search_api/code](http://dev.pipl.com/docs/search_api/code)  
-
-**Pipl's Thumbnail API**
-* Getting started tutorial - [http://dev.pipl.com/docs/thumbnail_api/getstarted](http://dev.pipl.com/docs/thumbnail_api/getstarted)  
-* Code snippets - [http://dev.pipl.com/docs/thumbnail_api/code](http://dev.pipl.com/docs/thumbnail_api/code)  
+* Getting started - [https://pipl.com/dev/guide/getting_started](https://pipl.com/dev/guide/getting_started)
+* Code snippets - [https://pipl.com/dev/guide/code_snippets](https://pipl.com/dev/guide/code_snippets)
+* Full reference - [https://pipl.com/dev/reference](https://pipl.com/dev/reference)

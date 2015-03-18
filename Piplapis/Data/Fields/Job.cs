@@ -23,6 +23,9 @@ namespace Pipl.APIs.Data.Fields
         [JsonProperty("date_range")]
         public DateRange DateRange { get; set; }
 
+        [JsonProperty("display")]
+        public string Display { get; private set; }
+
         /**
          * @param validSince
          *            `validSince` is a <code>DateTime</code> object, it's the first
@@ -48,59 +51,9 @@ namespace Pipl.APIs.Data.Fields
             this.DateRange = dateRange;
         }
 
-        [JsonProperty("diplay")]
-        public string Display
+        public override string ToString()
         {
-            get
-            {   
-                StringBuilder sb = new StringBuilder();
-
-                if (!string.IsNullOrEmpty(Title) && !string.IsNullOrEmpty(Organization))
-                    sb.Append(Title).Append(" at ").Append(Organization);
-                else
-                    // One of them is empty.
-                    sb.Append(Title).Append(Organization);
-
-                if (!string.IsNullOrEmpty(Industry))
-                {
-                    if (DateRange != null)
-                    {
-                        if (sb.Length == 0)
-                        {
-                            sb.Append(Industry + " ("
-                                      + DateRange.YearsRange.Item1 + "-"
-                                      + DateRange.YearsRange.Item2 + ")");
-                        }
-                        else
-                        {
-                            sb.Append(" (" + Industry + ", "
-                                    + DateRange.YearsRange.Item1 + "-"
-                                    + DateRange.YearsRange.Item2 + ")");
-                        }
-                    }
-                    else
-                    {
-                        if (sb.Length == 0)
-                        {
-                            sb.Append(Industry);
-                        }
-                        else
-                        {
-                            sb.Append(" (" + Industry + ")");
-                        }
-                    }
-                }
-                else
-                {
-                    if (DateRange != null && sb.Length != 0)
-                    {
-                        sb.Append(" (" + DateRange.YearsRange.Item1 + "-"
-                                + DateRange.YearsRange.Item2 + ")");
-                    }
-                }
-                string result = sb.ToString();
-                return result;
-            }
+            return Display;
         }
     }
 }

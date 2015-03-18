@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Newtonsoft.Json;
+using Pipl.APIs.Data.Enums;
 
 namespace Pipl.APIs.Data.Fields
 {
@@ -18,22 +19,14 @@ namespace Pipl.APIs.Data.Fields
         [JsonProperty("address_md5")]
         public string AddressMd5 { get; set; }
 
-        private static readonly HashSet<string> types = new HashSet<string> { "personal", "work" };
+        [JsonProperty("@disposable")]
+        public bool? Disposable { get; set; }
+
+        [JsonProperty("@email_provider")]
+        public bool? EmailProvider { get; set; }
 
         [JsonProperty("@type")]
-        private string type;
-
-        private static readonly string myName = typeof (Email).Name;
-
-        public string Type
-        {
-            set 
-            {
-                ValidateType(value, types, myName);
-                this.type = value;
-            }
-            get { return type; }
-        }
+        public EmailTypes? Type { get; set; }
 
         /**
          * @param validSince
@@ -45,13 +38,23 @@ namespace Pipl.APIs.Data.Fields
          *            addressMd5
          * @param type
          *            type is one of "work", "personal".
+         * @param @disposable
+         *            Disposable: is this a disposable email such as guerrillamail. 
+         *            Only shown when true
+         * @param @email_provider
+         *            EmailProvider: is this a public provider such as gmail/outlook. 
+         *            Only shown when true
          */
-        public Email(string address = null, string addressMd5 = null, string type = null, DateTime? validSince = null)
+        public Email(string address = null, string addressMd5 = null, EmailTypes? type = null, 
+            bool? disposable = null, bool? email_provider = null,
+            DateTime? validSince = null)
             : base(validSince)
         {
             this.Address = address;
             this.AddressMd5 = addressMd5;
             this.Type = type;
+            this.Disposable = disposable;
+            this.EmailProvider = email_provider;
         }
 
         /**
@@ -86,7 +89,7 @@ namespace Pipl.APIs.Data.Fields
         {
             get
             {
-                return IsValidEmail;
+                return (IsValidEmail) || (this.AddressMd5 != null && this.AddressMd5.Length == 32); ;
             }
         }
 
@@ -132,6 +135,13 @@ namespace Pipl.APIs.Data.Fields
                     return null;
                 }
             }
+        }
+
+        public override string ToString()
+        {
+            if (!String.IsNullOrEmpty(this.Address)) 
+                return this.Address;
+            return "";
         }
     }
 }

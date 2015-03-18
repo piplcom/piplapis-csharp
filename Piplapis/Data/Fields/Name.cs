@@ -2,6 +2,7 @@
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using Pipl.APIs.Data.Enums;
 
 namespace Pipl.APIs.Data.Fields
 {
@@ -29,19 +30,10 @@ namespace Pipl.APIs.Data.Fields
         public string Raw { get; set; }
 
         [JsonProperty("@type")]
-        private string type;
+        public NameTypes? Type { get; set; }
 
-        private static readonly HashSet<string> types = new HashSet<string> { "present", "maiden", "former", "alias" };
-        private static readonly string myName = typeof(Name).Name;
-        public string Type
-        {
-            set
-            {
-                ValidateType(value, types, myName);
-                this.type = value;
-            }
-            get { return type; }
-        }
+        [JsonProperty("display")]
+        public string Display { get; private set; }
 
         /**
          * @param prefix
@@ -67,7 +59,7 @@ namespace Pipl.APIs.Data.Fields
          *            time Pipl's crawlers found this data on the page.
          */
         public Name(string prefix = null, string first = null, string middle = null, string last = null,
-                string suffix = null, string raw = null, string type = null, DateTime? validSince = null)
+                string suffix = null, string raw = null, NameTypes? type = null, DateTime? validSince = null)
             : base(validSince)
         {
             this.Prefix = prefix;
@@ -79,26 +71,12 @@ namespace Pipl.APIs.Data.Fields
             this.Type = type;
         }
 
-        [JsonProperty("display")]
-        public string Display
+        public override string ToString()
         {
-            get
-            {
-                List<string> vals = new List<string>();
-                if (!String.IsNullOrEmpty(Prefix)) vals.Add(Prefix);
-                if (!String.IsNullOrEmpty(Raw)) vals.Add(Raw);
-                else
-                {
-                    if (!String.IsNullOrEmpty(First)) vals.Add(First);
-                    if (!String.IsNullOrEmpty(Middle)) vals.Add(Middle);
-                    if (!String.IsNullOrEmpty(Last)) vals.Add(Last);
-                }
-                if (!String.IsNullOrEmpty(Suffix)) vals.Add(Suffix);
-                return String.Join(" ", vals);
-            }
+            return Display;
         }
 
-        private static Regex nonAbc = new Regex("[^A-Za-z]");
+        private static Regex _nonAbc = new Regex("[^A-Za-z]");
 
         /**
          * A bool value that indicates whether the name is a valid name to search
@@ -111,9 +89,9 @@ namespace Pipl.APIs.Data.Fields
         {
             get
             {
-                return ((!String.IsNullOrEmpty(First) && nonAbc.Replace(First, string.Empty).Length >= 2) &&
-                        (!String.IsNullOrEmpty(Last) && nonAbc.Replace(Last, string.Empty).Length >= 2)) ||
-                        (!String.IsNullOrEmpty(Raw) && nonAbc.Replace(Raw, string.Empty).Length >= 4);
+                return ((!String.IsNullOrEmpty(First) && _nonAbc.Replace(First, string.Empty).Length >= 2) &&
+                        (!String.IsNullOrEmpty(Last) && _nonAbc.Replace(Last, string.Empty).Length >= 2)) ||
+                        (!String.IsNullOrEmpty(Raw) && _nonAbc.Replace(Raw, string.Empty).Length >= 4);
             }
         }
     }

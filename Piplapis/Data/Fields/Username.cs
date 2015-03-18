@@ -48,5 +48,12 @@ namespace Pipl.APIs.Data.Fields
                 return Content != null && Regex.Replace(Content, "[^A-Za-z0-9]", "").Length >= 4;
             }
         }
+
+        public override string ToString()
+        {
+            if (String.IsNullOrEmpty(this.Content))
+                return "";
+            return this.Content;
+        }
     }
 }

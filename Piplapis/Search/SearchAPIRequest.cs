@@ -9,15 +9,14 @@ using System.Web;
 using System.Text;
 using System.IO;
 using System.Collections.Specialized;
+using System.Linq;
+using Pipl.APIs.Utils;
+using System.Threading.Tasks;
 
 namespace Pipl.APIs.Search
 {
     /**
      * A request to Pipl's Search API.
-     * <p/>
-     * The request supports prioritizing/filtering the type of records you
-     * prefer to get in the response (see the appendPriorityRule and
-     * addRecordsFilter methods).
      * <p/>
      * Sending the request and getting the response is very simple and can be done
      * by either making a blocking call to request.Send() or by making a
@@ -26,16 +25,75 @@ namespace Pipl.APIs.Search
      */
     public class SearchAPIRequest
     {
-        public string ApiKey { get; set; }
-        public Person Person { get; set; }
-        public string QueryParamsMode { get; set; }
-        public bool ExactName { get; set; }
-        private List<string> FilterRecordsBy { get; set; }
-        private List<string> PrioritizeRecordsBy { get; set; }
-        public static string BASE_URL = "http://api.pipl.com/search/v3/json/?";
+        #region Static
+
+        public static RequestConfiguration DefaultRequestConfiguration;
+
+        // HTTP URL
+        private static string BaseUrlHttp = "http://api.pipl.com/search/v4/?";
         // HTTPS is also supported:
-        //public static string BASE_URL = "https://api.pipl.com/search/v3/json/?";
-        public static String defaultApiKey = null;
+        private static string BaseUrlHttpS = "https://api.pipl.com/search/v4/?";
+
+        // static CTOR
+        static SearchAPIRequest()
+        {
+            DefaultRequestConfiguration = new RequestConfiguration();
+        }
+
+        #endregion
+
+        
+        public Person Person { get; set; }
+
+        public RequestConfiguration RequestConfiguration;
+
+        /**
+         * The URL of the request (as a string).
+         *
+         * @return encoded url
+         * @throws IOException
+         */
+        [JsonIgnore]
+        public string Url { get; private set; }
+
+        public RequestConfiguration EffectiveConfiguration
+        {
+            get
+            {
+                if (RequestConfiguration != null)
+                    return RequestConfiguration;
+
+                return DefaultRequestConfiguration;
+            }
+        }
+
+        /**
+         * The parameters of the request (as a NameValueCollection).
+         *
+         * @return Collection of the request's parameters
+         * @throws IOException
+         */
+        private NameValueCollection _getUrlParams()
+        {
+            var res = new NameValueCollection();
+
+            res.Add("key", (String.IsNullOrEmpty(EffectiveConfiguration.ApiKey) ? RequestConfiguration.DefaultApiKey : EffectiveConfiguration.ApiKey));
+            res.Add("person", JsonConvert.SerializeObject(Person, Formatting.None, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
+            if (EffectiveConfiguration.MinimumProbability != null)
+                res.Add("minimum_probability", EffectiveConfiguration.MinimumProbability.ToString());
+            if (EffectiveConfiguration.ShowSources.HasValue)
+                res.Add("show_sources", EnumExtensions.JsonEnumName(EffectiveConfiguration.ShowSources.Value));
+            if (EffectiveConfiguration.HideSponsored != null)
+                res.Add("hide_sponsored", EffectiveConfiguration.HideSponsored.ToString());
+            if (EffectiveConfiguration.LiveFeeds != null)
+                res.Add("live_feeds", EffectiveConfiguration.LiveFeeds.ToString());
+            if (!String.IsNullOrEmpty(EffectiveConfiguration.SearchPointer))
+                res.Add("search_pointer", EffectiveConfiguration.SearchPointer);
+            if (EffectiveConfiguration.MinimumMatch != null)
+                res.Add("minimum_match", EffectiveConfiguration.MinimumMatch.ToString());
+
+            return res;
+        }
 
         /**
          * Initiate a new request object with given query params.
@@ -44,10 +102,6 @@ namespace Pipl.APIs.Search
          * Multiple query params are possible (for example querying by both email
          * and phone of the Person).
          *
-         * @param ApiKey            A valid API key (use "samplekey" for experimenting).
-         *                          Note that you can set a default API key
-         *                          (Pipl.APIs.Search.SearchAPIRequest.defaultApiKey = '<your_key>') instead of
-         *                          passing it to each request object.
          * @param firstName         First name, minimum 2 chars
          * @param middleName        Middle name
          * @param lastName          Last name, minimum 2 chars
@@ -69,6 +123,7 @@ namespace Pipl.APIs.Search
          *                          http://en.wikipedia.org/wiki/ISO_3166-2%3AUS
          *                          http://en.wikipedia.org/wiki/ISO_3166-2%3ACA
          * @param city              city
+         * @param zip_code          zipCode
          * @param rawAddress        An unparsed address
          * @param fromAge           fromAge
          * @param toAge             toAge
@@ -76,33 +131,19 @@ namespace Pipl.APIs.Search
          *                          The Person can contain every field allowed by the data-model
          *                          (see Pipl.APIs.Data.Fields) and can hold multiple fields of
          *                          the same type (for example: two emails, three addresses etc.)
-         * @param queryParamsMode   One of "and"/"or" (default "and").
-         *                          Advanced parameter, use only if you care about the
-         *                          value of record.queryParamsMatch in the response
-         *                          records.
-         *                          Each record in the response has an attribute
-         *                          "queryParamsMatch" which indicates whether the
-         *                          record has the all fields from the query or not.
-         *                          When set to "and" all query params are required in
-         *                          order to get queryParamsMatch=true, when set to
-         *                          "or" it's enough that the record has at least one
-         *                          of each field type (so if you search with a name
-         *                          and two addresses, a record with the name and one
-         *                          of the addresses will have queryParamsMatch=true)
-         * @param exactName         bool (default false).
-         *                          If set to true the names in the query will be matched
-         *                          "as is" without compensating for nicknames or multiple
-         *                          family names. For example "Jane Brown-Smith" won't return
-         *                          results for "Jane Brown" in the same way "Alexandra Pitt"
-         *                          won't return results for "Alex Pitt".
+         * @param requestConfiguration      RequestConfiguration object. If null, the default RequestConfiguration object is used               
          */
-        public SearchAPIRequest(string apiKey = null, string firstName = null, string middleName = null,
+        public SearchAPIRequest(string firstName = null, string middleName = null,
                                 string lastName = null, string rawName = null, string email = null, string phone = null,
-                                string username = null, string country = null, string state = null, string city = null,
+                                string username = null, string country = null, string state = null, string city = null, string zipCode = null,
                                 string rawAddress = null, int? fromAge = null, int? toAge = null, Person person = null,
-                                string queryParamsMode = "and", bool exactName = false)
+                                RequestConfiguration requestConfiguration = null)
         {
+            RequestConfiguration = requestConfiguration;
+
             List<Field> fields = new List<Field>();
+
+
             if (!String.IsNullOrEmpty(firstName) || !String.IsNullOrEmpty(middleName) || !String.IsNullOrEmpty(lastName))
             {
                 fields.Add(new Data.Fields.Name(first: firstName, middle: middleName, last: lastName));
@@ -117,24 +158,24 @@ namespace Pipl.APIs.Search
             }
             if (!String.IsNullOrEmpty(phone))
             {
-                fields.Add(Phone.FromText(phone));
+                fields.Add(new Phone(raw: phone));
             }
             if (!String.IsNullOrEmpty(username))
             {
                 fields.Add(new Username(username));
             }
-            if (!String.IsNullOrEmpty(country) || !String.IsNullOrEmpty(state) || !String.IsNullOrEmpty(city))
+            if (!String.IsNullOrEmpty(country) || !String.IsNullOrEmpty(state) || !String.IsNullOrEmpty(city) || !String.IsNullOrEmpty(zipCode))
             {
-                fields.Add(new Address(country: country, state: state, city: city));
+                fields.Add(new Address(country: country, state: state, city: city, zip_code: zipCode));
             }
             if (!String.IsNullOrEmpty(rawAddress))
             {
                 fields.Add(new Address(raw: rawAddress));
             }
-            if ((fromAge != null && fromAge >= 0) || (toAge != null && toAge >= 0))
+            if ((fromAge != null) || (toAge != null))
             {
-                // Need to cast back to int to remove their nullability
-                fields.Add(DOB.FromAgeRange((int)fromAge, (int)toAge));
+                fields.Add(DOB.FromAgeRange((fromAge == null) ? 0 : (int)fromAge, 
+                                            (toAge == null) ? 1000 : (int)toAge));
             }
             if (person == null)
             {
@@ -143,193 +184,9 @@ namespace Pipl.APIs.Search
             this.Person = person;
             Person.AddFields(fields);
 
-            this.ApiKey = apiKey;
-            this.QueryParamsMode = String.IsNullOrEmpty(queryParamsMode) ? "and" : queryParamsMode;
-            this.ExactName = exactName;
-            this.FilterRecordsBy = new List<string>();
-            this.PrioritizeRecordsBy = new List<string>();
+            Url = (EffectiveConfiguration.UseHttps) ? BaseUrlHttpS : BaseUrlHttp;
         }
 
-        /**
-         * Transform the params to the API format, return a list of params.
-         *
-         * @param domain
-         * @param category
-         * @param sponsored_source
-         * @param hasField
-         * @param hasFields
-         * @param queryParamsMatch
-         * @param queryPersonMatch
-         * @return List of params
-         * @throws Exception
-         */
-        private static List<string> prepareFilteringParams(string domain = null, string category = null,
-                                                               bool? sponsoredSource = null, Type hasField = null,
-                                                               List<Type> hasFields = null, bool? queryParamsMatch = null,
-                                                               bool? queryPersonMatch = null)
-        {
-            if (queryParamsMatch != null && !(bool)queryParamsMatch)
-            {
-                throw new ArgumentException("queryParamsMatch can only be True");
-            }
-            if (queryPersonMatch != null && !(bool)queryPersonMatch)
-            {
-                throw new ArgumentException("queryPersonMatch can only be true");
-            }
-
-            List<string> parameters = new List<string>();
-            if (domain != null)
-            {
-                parameters.Add("domain:" + domain);
-            }
-            if (category != null)
-            {
-                HashSet<string> set = new HashSet<string>();
-                set.Add(category);
-                Source.ValidateCategories(set);
-                parameters.Add("category:" + category);
-            }
-            if (sponsoredSource != null) parameters.Add("sponsored_source:" + sponsoredSource.ToString().ToLower());
-            if (queryParamsMatch != null) parameters.Add("query_params_match");
-            if (queryPersonMatch != null) parameters.Add("query_person_match");
-            if (hasFields == null)
-            {
-                hasFields = new List<Type>();
-            }
-            if (hasField != null)
-            {
-                hasFields.Add(hasField);
-            }
-            foreach (Type field in hasFields)
-                if (field.IsSubclassOf(typeof(Data.Fields.Field)))
-                    parameters.Add("has_field:" + field.Name);
-            return parameters;
-        }
-
-
-        /**
-         * Add a new "and" filter for the records returned in the response.
-         * <p/>
-         * IMPORTANT: This method can be called multiple times per request for
-         * adding multiple "and" filters, each of these "and" filters is
-         * interpreted as "or" with the other filters.
-         * For example:
-         * <p/>
-         * Examples:
-         * <p><blockquote><pre>
-         * SearchAPIRequest apiRequest = new SearchAPIRequest(apiKey: "samplekey", username: "eric123");
-         * List<Field> hasFields = new List<Field>();
-         * apiRequest.addRecordsFilter(domain: "linkedin", hasFields: new List<Field>(){typeof(Phone)});
-         * apiRequest.addRecordsFilter(hasFields: new List<Field>(){typeof(Phone), typeof(Job)});
-         * <p/>
-         * </pre></blockquote>
-         * <p/>
-         * The above request is only for records that are:
-         * (from LinkedIn AND has a phone) OR (has a phone AND has a job).
-         * Records that don't match this rule will not come back in the response.
-         * <p/>
-         * Please note that in case there are too many results for the query,
-         * adding filters to the request can significantly improve the number of
-         * useful results; when you define which records interest you, you'll
-         * get records that would have otherwise be cut-off by the limit on the
-         * number of records per query.
-         *
-         * @param domain             For example "linkedin.com", you may also use "linkedin"
-         *                           but note that it'll match "linkedin.*" and "*.linkedin.*"
-         *                          (any sub-domain and any TLD).
-         * @param category           Any one of the categories defined in
-         *                           Pipl.APIs.Data.source.Source.categories.
-         * @param sponsoredSource    bool, true means you want just the records that
-         *                           come from a sponsored source and false means you
-         *                           don't want these records.
-         * @param hasFields          A list of fields classes from Pipl.APIs.Data.Fields,
-         *                           records must have content in all these fields.
-         *                           For example: [Name, Phone] means you only want records
-         *                           that has at least one name and at least one phone.
-         * @param queryParamsMatch   true is the only possible value and it means you
-         *                           want records that match all the params you passed
-         *                           in the query.
-         * @param queryPersonMatch   true is the only possible value and it means you
-         *                           want records that are the same Person you
-         *                           queried by (only records with
-         *                           queryPersonMatch == 1.0, see the documentation
-         *                           of record.queryPersonMatch for more details).
-         * @throws Exception
-         */
-        public void addRecordsFilter(string domain = null, string category = null,
-                bool? sponsoredSource = null, List<Type> hasFields = null,
-                bool? queryParamsMatch = null, bool? queryPersonMatch = null)
-        {
-            List<string> parameters = prepareFilteringParams(domain, category, sponsoredSource,
-                    null, hasFields, queryParamsMatch, queryPersonMatch);
-            if (parameters != null)
-            {
-                FilterRecordsBy.Add(string.Join(" AND ", parameters));
-            }
-        }
-
-        /**
-         * Append a new priority rule for the records returned in the response.
-         * <p/>
-         * IMPORTANT: This method can be called multiple times per request for
-         * adding multiple priority rules, each call can be with only one argument
-         * and the order of the calls matter (the first rule added is the highest
-         * priority, the second is second priority etc).
-         * For example:
-         * <p/>
-         * Examples:
-         * <p><blockquote><pre>
-         * SearchAPIRequest apiRequest = new SearchAPIRequest(apiKey: "samplekey", username: "eric123");
-         * apiRequest.appendPriorityRule(domain: "linkedin");
-         * apiRequest.appendPriorityRule(hasField: typeof(Phone));
-         * <p/>
-         * </pre></blockquote>
-         * <p/>
-         * In the response to the above request records from LinkedIn will be
-         * returned before records that aren't from LinkedIn and records with
-         * phone will be returned before records without phone.
-         * <p/>
-         * Please note that in case there are too many results for the query,
-         * adding priority rules to the request does not only affect the order
-         * of the records but can significantly improve the number of useful
-         * results; when you define which records interest you, you'll get records
-         * that would have otherwise be cut-off by the limit on the number
-         * of records per query.
-         *
-         * @param domain             For example "linkedin.com", "linkedin" is also possible
-         *                           and it'll match "linkedin.*".
-         * @param category           Any one of the categories defined in
-         *                           Pipl.APIs.Data.source.Source.categories.
-         * @param sponsoredSource    true will bring the records that
-         *                           come from a sponsored source first and false
-         *                           will bring the non-sponsored records first.
-         * @param hasField           A field type from Pipl.APIs.Data.Fields.
-         *                           For example: hasField=typeof(Phone) means you want to give
-         *                           a priority to records that has at least one phone.
-         * @param queryParamsMatch   true is the only possible value and it means you
-         *                           want to give a priority to records that match all
-         *                           the params you passed in the query.
-         * @param queryPersonMatch   true is the only possible value and it means you
-         *                           want to give a priority to records with higher
-         *                           queryPersonMatch (see the documentation of
-         *                           record.queryPersonMatch for more details)
-         * @throws ArgumentException ArgumentException is raised in any case of an invalid parameter.
-         */
-        public void appendPriorityRule(string domain = null, string category = null,
-                                       bool? sponsoredSource = null, Type hasField = null,
-                                       bool? queryParamsMatch = null, bool? queryPersonMatch = null)
-        {
-            List<string> parameters = SearchAPIRequest.prepareFilteringParams(domain, category, sponsoredSource,
-                    hasField, null, queryParamsMatch, queryPersonMatch);
-            if (parameters.Count > 1)
-            {
-                throw new ArgumentException("The function should be called with one argument");
-            }
-            if (parameters != null)
-            {
-                PrioritizeRecordsBy.Add(parameters[0]);
-            }
-        }
 
         /**
          * Check if the request is valid and can be sent, raise ArgumentException if
@@ -340,63 +197,27 @@ namespace Pipl.APIs.Search
          *               an exception is raised only when the search request cannot be performed
          *               because required query params are missing.
          */
-        public void validateQueryParams(bool strict = true)
+        public void ValidateQueryParams(bool strict = true)
         {
-            if (String.IsNullOrEmpty(this.ApiKey) && String.IsNullOrEmpty(SearchAPIRequest.defaultApiKey))
+            if (String.IsNullOrEmpty(EffectiveConfiguration.ApiKey) && String.IsNullOrEmpty(RequestConfiguration.DefaultApiKey))
             {
                 throw new ArgumentException("API key is missing");
             }
-            if (strict && (!"and".Equals(QueryParamsMode) && !"or".Equals(QueryParamsMode)))
+            if ((EffectiveConfiguration.MinimumProbability != null) && (EffectiveConfiguration.MinimumProbability < 0 || EffectiveConfiguration.MinimumProbability > 1))
             {
-                throw new ArgumentException("query_params_match should be one of and/or");
+                throw new ArgumentException("minimum_probability must have a value between 0 and 1");
             }
             if (!Person.IsSearchable)
             {
                 throw new ArgumentException("No valid name/username/phone/email in request");
             }
-            if (strict && Person.UnsearchableFields.Count > 0)
+            if (strict && Person.UnsearchableFields.Count() > 0)
             {
                 throw new ArgumentException("Some fields are unsearchable: " + Person.UnsearchableFields);
             }
-        }
-
-        /**
-         * The URL of the request (as a string).
-         *
-         * @return encoded url
-         * @throws IOException
-         */
-        [JsonIgnore]
-        public string Url
-        {
-            get
+            if ((EffectiveConfiguration.MinimumMatch != null) && (EffectiveConfiguration.MinimumMatch < 0 || EffectiveConfiguration.MinimumMatch > 1))
             {
-                return BASE_URL;
-            }
-        }
-
-
-        /**
-         * The parameters of the request (as a NameValueCollection).
-         *
-         * @return Collection of the request's parameters
-         * @throws IOException
-         */
-        [JsonIgnore]
-        public NameValueCollection UrlParams
-        {
-            get
-            {
-                NameValueCollection Params = new NameValueCollection();
-
-                Params.Add("key", (String.IsNullOrEmpty(ApiKey) ? SearchAPIRequest.defaultApiKey : ApiKey));
-                Params.Add("person", JsonConvert.SerializeObject(Person, Formatting.None, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
-                Params.Add("query_params_mode", QueryParamsMode);
-                Params.Add("exact_name", ExactName.ToString());
-                Params.Add("prioritize_records_by", String.Join(",", PrioritizeRecordsBy));
-                Params.Add("filter_records_by", String.Join(",", FilterRecordsBy));
-
-                return Params;
+                throw new ArgumentException("minimum_match must have a value between 0 and 1");
             }
         }
 
@@ -404,107 +225,43 @@ namespace Pipl.APIs.Search
         /**
          * Send the request and return the response or raise SearchAPIError.
          * <p/>
-         * Calling this method blocks the program until the response is returned,
-         * if you want the request to be sent asynchronously please refer to the
-         * SendAsync method.
          *
-         * @param strictValidation  A bool argument that's passed to the
-         *                          validateQueryParams method.
-         * @return The response is returned as a SearchAPIResponse object.
-         * @throws ArgumentException Raises ArgumentException (raised from validateQueryParams)
-         * @throws IOException              IOException
-         * @throws SearchAPIError           SearchAPIError (when the response is returned but contains an error).
-         */
-
-        public SearchAPIResponse Send(bool strictValidation = true)
-        {
-            validateQueryParams(strictValidation);
-            using (WebClient client = new WebClient())
-            {
-                WebException contextException = null;
-                HttpWebResponse response;
-                try
-                {
-                    string responseBody = System.Text.Encoding.UTF8.GetString(client.UploadValues(Url, UrlParams));
-                    return JsonConvert.DeserializeObject<SearchAPIResponse>(responseBody);
-                }
-                    catch (WebException we)
-                {
-                    contextException = we;
-                    response = (HttpWebResponse) we.Response;
-                    if (response == null) throw;
-                }
-                catch (Exception e)
-                {
-                    
-                    throw;
-                }
-                Dictionary<string, object> err;
-                try
-                {
-                    string result;
-                    using (StreamReader sr = new StreamReader(response.GetResponseStream()))
-                        result = sr.ReadToEnd();
-                    err = JsonConvert.DeserializeObject<Dictionary<string, object>>(result);
-                }
-                catch
-                {
-                    throw contextException;
-                }
-                string error = null;
-                if (!err.ContainsKey("error"))
-                    throw contextException;
-
-                error = err["error"].ToString();
-                int httpStatusCode;
-                if (!err.ContainsKey("@http_status_code"))
-                    throw contextException;
-
-                if (!int.TryParse(err["@http_status_code"].ToString(), out httpStatusCode))
-                    throw contextException;
-
-                throw new SearchAPIError(error, httpStatusCode);
-            }
-        }
-
-        /**
-         * Same as Send() but in a non-blocking way.
-         * <p/>
-         * Use this method if you want to send the request asynchronously so your
-         * program can do other things while waiting for the response.
-         *
-         * @param searchAPICallBack     a callback that will receive the response once the response is
-	     *                              returned
          * @param strictValidation      A bool argument that's passed to the
          *                              validateQueryParams method.
+         * @return A task that runs the request asyncronously
          * @throws ArgumentException    Raises ArgumentException (raised from validateQueryParams)
          * @throws IOException          IOException
          */
-        public void SendAsync(SearchAPICallBack searchAPICallBack, bool strictValidation = true)
+        public Task<SearchAPIResponse> SendAsync(bool strictValidation = true)
         {
-            validateQueryParams(strictValidation);
+            ValidateQueryParams(strictValidation);
+            TaskCompletionSource<SearchAPIResponse> taskCompletionSource = new TaskCompletionSource<SearchAPIResponse>();
+
             using (WebClient client = new WebClient())
             {
-
                 Uri uri = new Uri(Url);
-                client.UploadValuesCompleted += new UploadValuesCompletedEventHandler(SearchUploadValuesCompletedEventHandler);
-                client.UploadValuesAsync(uri, null, UrlParams, searchAPICallBack);
-
+                client.UploadValuesCompleted += (s, e) =>
+                {
+                    _searchUploadValuesCompletedEventHandler(e, taskCompletionSource);
+                };
+                client.UploadValuesAsync(uri, null, _getUrlParams(), null);
             }
+
+            return taskCompletionSource.Task;
+
         }
 
-        void SearchUploadValuesCompletedEventHandler(object sender, UploadValuesCompletedEventArgs e)
+        private void _searchUploadValuesCompletedEventHandler(UploadValuesCompletedEventArgs e, TaskCompletionSource<SearchAPIResponse> taskCompletionSource)
         {
-
-          var searchApiCallBack = (SearchAPICallBack)e.UserState;
             if (e.Error == null)
             {
-                searchApiCallBack.callback(JsonConvert.DeserializeObject<SearchAPIResponse>(System.Text.Encoding.UTF8.GetString(e.Result)));
+                var res = JsonConvert.DeserializeObject<SearchAPIResponse>(System.Text.Encoding.UTF8.GetString(e.Result));
+                taskCompletionSource.SetResult(res);
                 return;
             }
             if (!(e.Error is WebException))
             {
-                searchApiCallBack.errback(e.Error);
+                taskCompletionSource.SetException(e.Error);
                 return;
             }
             
@@ -512,7 +269,7 @@ namespace Pipl.APIs.Search
             HttpWebResponse response = (HttpWebResponse)we.Response;
             if (response == null)
             {
-                searchApiCallBack.errback(e.Error);
+                taskCompletionSource.SetException(e.Error);
                 return;
             }
             string result;
@@ -525,7 +282,7 @@ namespace Pipl.APIs.Search
             }
             catch (Exception ex)
             {
-                searchApiCallBack.errback(ex);
+                taskCompletionSource.SetException(ex);
                 return;
             }
 
@@ -537,28 +294,28 @@ namespace Pipl.APIs.Search
             }
             catch (Exception ex)
             {
-                searchApiCallBack.errback(ex);
+                taskCompletionSource.SetException(ex);
                 return;
             }
 
             if (!err.ContainsKey("error"))
             {
-                searchApiCallBack.errback(we);
+                taskCompletionSource.SetException(we);
                 return;
             }
             string error = err["error"].ToString();
             if (!err.ContainsKey("@http_status_code"))
             {
-                searchApiCallBack.errback(we);
+                taskCompletionSource.SetException(we);
                 return;
             }
             int httpStatusCode;
             if (!int.TryParse(err["@http_status_code"].ToString(), out httpStatusCode))
             {
-                searchApiCallBack.errback(we);
+                taskCompletionSource.SetException(we);
                 return;
             }
-            searchApiCallBack.errback(new SearchAPIError(error, httpStatusCode));
+            taskCompletionSource.SetException(new SearchAPIError(error, httpStatusCode));
             return;
         }
     }

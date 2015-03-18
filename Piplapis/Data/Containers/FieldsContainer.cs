@@ -1,11 +1,12 @@
 ﻿using System.Collections.Generic;
 using Newtonsoft.Json;
 using Pipl.APIs.Data.Fields;
+using System.Linq;
 
 namespace Pipl.APIs.Data.Containers
 {
     /**
-     * The base class of Record and Person, made only for inheritance.
+     * The base class of Source and Person, made only for inheritance.
      */
     public class FieldsContainer
     {
@@ -36,18 +37,24 @@ namespace Pipl.APIs.Data.Containers
         [JsonProperty("user_ids")]
         public List<UserID> UserIDs { get; set; }
 
-        [JsonProperty("dobs")]
-        public List<DOB> DOBs { get; set; }
+        [JsonProperty("dob")]
+        public DOB DOB { get; set; }
 
-        [JsonProperty("related_urls")]
-        public List<RelatedURL> RelatedURLs { get; set; }
+        [JsonProperty("gender")]
+        public Gender Gender { get; set; }
 
-        [JsonProperty("relationships")]
-        public List<Relationship> Relationships { get; set; }
+        [JsonProperty("languages")]
+        public List<Language> Languages { get; set; }
 
-        [JsonProperty("tags")]
-        public List<Tag> Tags { get; set; }
+        [JsonProperty("ethnicities")]
+        public List<Ethnicity> Ethnicities { get; set; }
 
+        [JsonProperty("origin_countries")]
+        public List<OriginCountry> OriginCountries { get; set; }
+
+        [JsonProperty("urls")]
+        public List<URL> Urls { get; set; }
+        
         public FieldsContainer()
         {
             Names = new List<Data.Fields.Name>();
@@ -59,21 +66,23 @@ namespace Pipl.APIs.Data.Containers
             Images = new List<Image>();
             Usernames = new List<Username>();
             UserIDs = new List<UserID>();
-            DOBs = new List<DOB>();
-            RelatedURLs = new List<RelatedURL>();
-            Relationships = new List<Relationship>();
-            Tags = new List<Tag>();
+            Languages = new List<Language>();
+            Ethnicities = new List<Ethnicity>();
+            OriginCountries = new List<OriginCountry>();
+            Urls = new List<URL>();
         }
 
-        public FieldsContainer(List<Field> fields = null)
+        public FieldsContainer(IEnumerable<Field> fields = null)
             : this()
         {
             if (fields != null)
                 AddFields(fields);
         }
 
-        public void AddFields(List<Field> fields)
+        public virtual void AddFields(IEnumerable<Field> fields)
         {
+            if (fields == null) return;
+
             // Add the fields to their corresponding container.
             foreach (Field field in fields)
             {
@@ -115,19 +124,27 @@ namespace Pipl.APIs.Data.Containers
                 }
                 else if (field.GetType() == typeof(DOB))
                 {
-                    DOBs.Add((DOB)field);
+                    DOB = (DOB)field;
                 }
-                else if (field.GetType() == typeof(RelatedURL))
+                else if (field.GetType() == typeof(Gender))
                 {
-                    RelatedURLs.Add((RelatedURL)field);
+                    Gender = (Gender)field;
                 }
-                else if (field.GetType() == typeof(Relationship))
+                else if (field.GetType() == typeof(Language))
                 {
-                    Relationships.Add((Relationship)field);
+                    Languages.Add((Language)field);
                 }
-                else if (field.GetType() == typeof(Tag))
+                else if (field.GetType() == typeof(Ethnicity))
                 {
-                    Tags.Add((Tag)field);
+                    Ethnicities.Add((Ethnicity)field);
+                }
+                else if (field.GetType() == typeof(OriginCountry))
+                {
+                    OriginCountries.Add((OriginCountry)field);
+                }
+                else if (field.GetType() == typeof(URL))
+                {
+                    Urls.Add((URL)field);
                 }
             }
         }
@@ -135,25 +152,29 @@ namespace Pipl.APIs.Data.Containers
         /**
          * @return A list with all the fields contained in this object.
          */
-        public List<Field> AllFields
+        public virtual IEnumerable<Field> AllFields
         {
             get
             {
-                List<Field> fields = new List<Field>();
-                fields.AddRange(Names);
-                fields.AddRange(Addresses);
-                fields.AddRange(Phones);
-                fields.AddRange(Emails);
-                fields.AddRange(Jobs);
-                fields.AddRange(Educations);
-                fields.AddRange(Images);
-                fields.AddRange(Usernames);
-                fields.AddRange(UserIDs);
-                fields.AddRange(DOBs);
-                fields.AddRange(RelatedURLs);
-                fields.AddRange(Relationships);
-                fields.AddRange(Tags);
-                return fields;
+                var res = Names.Cast<Field>()
+                    .Concat(Addresses).Cast<Field>()
+                    .Concat(Phones).Cast<Field>()
+                    .Concat(Emails).Cast<Field>()
+                    .Concat(Jobs).Cast<Field>()
+                    .Concat(Educations).Cast<Field>()
+                    .Concat(Images).Cast<Field>()
+                    .Concat(Usernames).Cast<Field>()
+                    .Concat(UserIDs).Cast<Field>()
+                    .Concat(Languages).Cast<Field>()
+                    .Concat(Ethnicities).Cast<Field>()
+                    .Concat(OriginCountries).Cast<Field>()
+                    .Concat(Urls).Cast<Field>();
+
+                foreach (var item in res)
+                    yield return item;
+
+                if (DOB != null) yield return DOB;
+                if (Gender != null) yield return Gender;
             }
         }
     }

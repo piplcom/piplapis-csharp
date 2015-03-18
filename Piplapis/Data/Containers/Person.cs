@@ -10,9 +10,9 @@ namespace Pipl.APIs.Data.Containers
     /**
      * A Person object is all the data available on an individual.
      * <p/>
-     * The Person object is essentially very similar in its structure to the Record
+     * The Person object is essentially very similar in its structure to the Source
      * object, the main difference is that data about an individual can come from
-     * multiple sources while a record is data from one source.
+     * multiple sources while a Source is data from one source.
      * <p/>
      * The person's data comes as field objects (Name, Address, Email etc. see
      * Pipl.APIs.Data.Fields). Each type of field has its on container (note that
@@ -26,23 +26,37 @@ namespace Pipl.APIs.Data.Containers
      */
     public class Person : FieldsContainer
     {
-        [JsonProperty("sources")]
-        public List<Source> Sources { get; set; }
+        [JsonProperty("relationships")]
+        public List<Relationship> Relationships { get; set; }
 
-        [JsonProperty("@query_params_match")]
-        public bool? QueryParamsMatch { get; set; }
+        [JsonProperty("@id")]
+        public string Id { get; set; }
+
+        [JsonProperty("@match")]
+        public float? Match { get; set; }
+
+        [JsonProperty("@search_pointer")]
+        public string SearchPointer { get; set; }
 
         /**
-         * @param fields             An List of <code>Field</code> objects
-         * @param sources            A list of Source objects
+         * @param fields             A List of <code>Field</code> objects
+         * @param relationships      A List of <code>Relationship</code> objects
          * @param queryParamsMatch 	 A bool value that indicates whether the record contains all the params
          *                           from the query or not.
+         * @param @id                GUID
+         * @param @match             Match (float)
+         * @param @search_pointer    SearchPointer - For PossiblePerson only
          */
-        public Person(List<Field> fields = null, List<Source> sources = null, bool? queryParamsMatch = null)
+        public Person(IEnumerable<Field> fields = null, bool? queryParamsMatch = null,
+            string id = null, float? match = null, string search_pointer = null)
             : base(fields)
         {
-            this.Sources = sources;
-            this.QueryParamsMatch = queryParamsMatch;
+            Relationships = new List<Relationship>();
+
+            this.Id = id;
+            this.Match = match;
+
+            this.SearchPointer = search_pointer;
         }
 
         /**
@@ -92,19 +106,11 @@ namespace Pipl.APIs.Data.Containers
          *         invalid etc.
          */
         [JsonIgnore]
-        public List<Field> UnsearchableFields
+        public IEnumerable<Field> UnsearchableFields
         {
             get
             {
-                List<Field> unSearchableList = new List<Field>();
-                foreach (Field field in AllFields)
-                {
-                    if (!field.IsSearchable)
-                    {
-                        unSearchableList.Add(field);
-                    }
-                }
-                return unSearchableList;
+                return AllFields.Where(f => !f.IsSearchable);
             }
         }
     }
