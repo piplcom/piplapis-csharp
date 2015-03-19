@@ -91,6 +91,11 @@ namespace Pipl.APIs.Search
             return Sources.ToLookup(s => EnumExtensions.JsonEnumName(s.Category.Value));
         }
 
+        public ILookup<string, Source> GroupSourcesByDomain()
+        {
+            return Sources.ToLookup(s => s.Domain);
+        }
+
         public Address Address
         {
             get

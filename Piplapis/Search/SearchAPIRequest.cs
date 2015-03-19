@@ -27,7 +27,7 @@ namespace Pipl.APIs.Search
     {
         #region Static
 
-        public static RequestConfiguration DefaultRequestConfiguration;
+        public static SearchConfiguration DefaultConfiguration;
 
         // HTTP URL
         private static string BaseUrlHttp = "http://api.pipl.com/search/v4/?";
@@ -37,7 +37,7 @@ namespace Pipl.APIs.Search
         // static CTOR
         static SearchAPIRequest()
         {
-            DefaultRequestConfiguration = new RequestConfiguration();
+            DefaultConfiguration = new SearchConfiguration();
         }
 
         #endregion
@@ -45,7 +45,7 @@ namespace Pipl.APIs.Search
         
         public Person Person { get; set; }
 
-        public RequestConfiguration RequestConfiguration;
+        public SearchConfiguration Configuration;
 
         /**
          * The URL of the request (as a string).
@@ -56,14 +56,14 @@ namespace Pipl.APIs.Search
         [JsonIgnore]
         public string Url { get; private set; }
 
-        public RequestConfiguration EffectiveConfiguration
+        public SearchConfiguration EffectiveConfiguration
         {
             get
             {
-                if (RequestConfiguration != null)
-                    return RequestConfiguration;
+                if (Configuration != null)
+                    return Configuration;
 
-                return DefaultRequestConfiguration;
+                return DefaultConfiguration;
             }
         }
 
@@ -77,7 +77,7 @@ namespace Pipl.APIs.Search
         {
             var res = new NameValueCollection();
 
-            res.Add("key", (String.IsNullOrEmpty(EffectiveConfiguration.ApiKey) ? RequestConfiguration.DefaultApiKey : EffectiveConfiguration.ApiKey));
+            res.Add("key", (String.IsNullOrEmpty(EffectiveConfiguration.ApiKey) ? SearchConfiguration.DefaultApiKey : EffectiveConfiguration.ApiKey));
             res.Add("person", JsonConvert.SerializeObject(Person, Formatting.None, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
             if (EffectiveConfiguration.MinimumProbability != null)
                 res.Add("minimum_probability", EffectiveConfiguration.MinimumProbability.ToString());
@@ -137,9 +137,9 @@ namespace Pipl.APIs.Search
                                 string lastName = null, string rawName = null, string email = null, string phone = null,
                                 string username = null, string country = null, string state = null, string city = null, string zipCode = null,
                                 string rawAddress = null, int? fromAge = null, int? toAge = null, Person person = null,
-                                RequestConfiguration requestConfiguration = null)
+                                SearchConfiguration requestConfiguration = null)
         {
-            RequestConfiguration = requestConfiguration;
+            Configuration = requestConfiguration;
 
             List<Field> fields = new List<Field>();
 
@@ -199,7 +199,7 @@ namespace Pipl.APIs.Search
          */
         public void ValidateQueryParams(bool strict = true)
         {
-            if (String.IsNullOrEmpty(EffectiveConfiguration.ApiKey) && String.IsNullOrEmpty(RequestConfiguration.DefaultApiKey))
+            if (String.IsNullOrEmpty(EffectiveConfiguration.ApiKey) && String.IsNullOrEmpty(SearchConfiguration.DefaultApiKey))
             {
                 throw new ArgumentException("API key is missing");
             }

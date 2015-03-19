@@ -78,7 +78,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Search\SearchAPIError.cs" />
     <Compile Include="Search\SearchAPIRequest.cs" />
-    <Compile Include="Search\RequestConfiguration.cs" />
+    <Compile Include="Search\SearchConfiguration.cs" />
     <Compile Include="Search\SearchAPIResponse.cs" />
     <Compile Include="Search\ShowSources.cs" />
     <Compile Include="Utils\EnumExtensions.cs" />
