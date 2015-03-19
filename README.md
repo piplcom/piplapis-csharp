@@ -1,4 +1,4 @@
-piplapis .NET (C#) Library
+pipl .NET (C#) Library
 ===========================
 
 This is a .NET client library for easily integrating Pipl's APIs into your application.
@@ -16,7 +16,7 @@ Installation
 ------------
 
 ```
-PM> Install-Package piplapis
+PM> Install-Package piplclient
 ```
 
 * Or simply build the source code. The solution file is `PiplApisProd.sln`, and the default target folder is `bin/debug` or `bin/release`, according to the build's configuration.
