@@ -12,6 +12,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using Pipl.APIs.Utils;
 using System.Threading.Tasks;
+using System.Globalization;
 
 namespace Pipl.APIs.Search
 {
@@ -80,7 +81,7 @@ namespace Pipl.APIs.Search
             res.Add("key", (String.IsNullOrEmpty(EffectiveConfiguration.ApiKey) ? SearchConfiguration.DefaultApiKey : EffectiveConfiguration.ApiKey));
             res.Add("person", JsonConvert.SerializeObject(Person, Formatting.None, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
             if (EffectiveConfiguration.MinimumProbability != null)
-                res.Add("minimum_probability", EffectiveConfiguration.MinimumProbability.ToString());
+                res.Add("minimum_probability", ((float)EffectiveConfiguration.MinimumProbability).ToString(CultureInfo.CreateSpecificCulture("en-US")));
             if (EffectiveConfiguration.ShowSources.HasValue)
                 res.Add("show_sources", EnumExtensions.JsonEnumName(EffectiveConfiguration.ShowSources.Value));
             if (EffectiveConfiguration.HideSponsored != null)
@@ -89,8 +90,10 @@ namespace Pipl.APIs.Search
                 res.Add("live_feeds", EffectiveConfiguration.LiveFeeds.ToString());
             if (!String.IsNullOrEmpty(EffectiveConfiguration.SearchPointer))
                 res.Add("search_pointer", EffectiveConfiguration.SearchPointer);
-            if (EffectiveConfiguration.MinimumMatch != null)
-                res.Add("minimum_match", EffectiveConfiguration.MinimumMatch.ToString());
+            if (EffectiveConfiguration.MinimumMatch != null){
+                res.Add("minimum_match", ((float) EffectiveConfiguration.MinimumMatch).ToString(CultureInfo.CreateSpecificCulture("en-US")));
+            }
+                
 
             return res;
         }
