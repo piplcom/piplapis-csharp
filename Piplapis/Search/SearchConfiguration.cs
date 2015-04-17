@@ -12,7 +12,6 @@ namespace Pipl.APIs.Search
         public ShowSources? ShowSources { get; set; }
         public bool? HideSponsored { get; set; }
         public bool? LiveFeeds { get; set; }
-        public string SearchPointer { get; set; }
         public float? MinimumMatch { get; set; }
         public bool UseHttps { get; set; }
 
@@ -31,7 +30,6 @@ namespace Pipl.APIs.Search
          *                          Hide sponsored results.
          * @param liveFeeds         bool (default true).
          *                          Whether to use live search.
-         * @param search_pointer    SearchPointer
          * @param minimum_match     float? value range: 0-1 (default is None).
          * @param useHttps          Optional, default is false
          *                          Indicates whether to use https(true) or http(false)
@@ -41,8 +39,7 @@ namespace Pipl.APIs.Search
 
         public SearchConfiguration(string apiKey = SearchConfiguration.DefaultApiKey,
                                 float? minimumProbability = null, ShowSources? showSources = null,
-                                bool? hideSponsored = null, bool? liveFeeds = null, 
-                                string searchPointer = null, float? minimumMatch = null, 
+                                bool? hideSponsored = null, bool? liveFeeds = null, float? minimumMatch = null, 
                                 bool useHttps = false)
         {
             this.ApiKey = apiKey;
@@ -50,7 +47,6 @@ namespace Pipl.APIs.Search
             this.ShowSources = showSources;
             this.HideSponsored = hideSponsored;
             this.LiveFeeds = liveFeeds;
-            this.SearchPointer = searchPointer;
             this.MinimumMatch = minimumMatch;
             this.UseHttps = useHttps;
         }

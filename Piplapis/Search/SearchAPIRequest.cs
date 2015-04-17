@@ -88,8 +88,8 @@ namespace Pipl.APIs.Search
                 res.Add("hide_sponsored", EffectiveConfiguration.HideSponsored.ToString());
             if (EffectiveConfiguration.LiveFeeds != null)
                 res.Add("live_feeds", EffectiveConfiguration.LiveFeeds.ToString());
-            if (!String.IsNullOrEmpty(EffectiveConfiguration.SearchPointer))
-                res.Add("search_pointer", EffectiveConfiguration.SearchPointer);
+            if (!String.IsNullOrEmpty(Person.SearchPointer))
+                res.Add("search_pointer", Person.SearchPointer);
             if (EffectiveConfiguration.MinimumMatch != null){
                 res.Add("minimum_match", ((float) EffectiveConfiguration.MinimumMatch).ToString(CultureInfo.CreateSpecificCulture("en-US")));
             }
@@ -134,13 +134,14 @@ namespace Pipl.APIs.Search
          *                          The Person can contain every field allowed by the data-model
          *                          (see Pipl.APIs.Data.Fields) and can hold multiple fields of
          *                          the same type (for example: two emails, three addresses etc.)
+         * @param searchPointer     A search pointer (from a Possible Person object), to be used for drill-down searches.                         
          * @param requestConfiguration      RequestConfiguration object. If null, the default RequestConfiguration object is used               
          */
         public SearchAPIRequest(string firstName = null, string middleName = null,
                                 string lastName = null, string rawName = null, string email = null, string phone = null,
                                 string username = null, string country = null, string state = null, string city = null, string zipCode = null,
-                                string rawAddress = null, int? fromAge = null, int? toAge = null, Person person = null,
-                                SearchConfiguration requestConfiguration = null)
+                                string rawAddress = null, int? fromAge = null, int? toAge = null, Person person = null, 
+                                string searchPointer = null, SearchConfiguration requestConfiguration = null)
         {
             Configuration = requestConfiguration;
 
@@ -183,6 +184,10 @@ namespace Pipl.APIs.Search
             if (person == null)
             {
                 person = new Person();
+            }
+            if (searchPointer != null)
+            {
+                person.SearchPointer = searchPointer;
             }
             this.Person = person;
             Person.AddFields(fields);

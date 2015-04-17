@@ -68,6 +68,10 @@ namespace Pipl.APIs.Data.Containers
         {
             get
             {
+                if (SearchPointer != null)
+                {
+                    return true;
+                }
                 foreach (Fields.Name name in this.Names)
                 {
                     if (name.IsSearchable)
