@@ -221,7 +221,8 @@ namespace Pipl.APIs.Search
             }
             if (strict && Person.UnsearchableFields.Count() > 0)
             {
-                throw new ArgumentException("Some fields are unsearchable: " + Person.UnsearchableFields);
+                var unsearchableFields = from field in Person.UnsearchableFields select field.Repr();
+                throw new ArgumentException("Some fields are unsearchable: " + String.Join(", ", unsearchableFields));
             }
             if ((EffectiveConfiguration.MinimumMatch != null) && (EffectiveConfiguration.MinimumMatch < 0 || EffectiveConfiguration.MinimumMatch > 1))
             {
@@ -256,7 +257,6 @@ namespace Pipl.APIs.Search
             }
 
             return taskCompletionSource.Task;
-
         }
 
         private void _searchUploadValuesCompletedEventHandler(UploadValuesCompletedEventArgs e, TaskCompletionSource<SearchAPIResponse> taskCompletionSource)
