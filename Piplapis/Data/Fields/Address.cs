@@ -110,9 +110,7 @@ namespace Pipl.APIs.Data.Fields
         {
             get
             {
-                return (!String.IsNullOrEmpty(Raw) || 
-                    (IsValidCountry && 
-                    (String.IsNullOrEmpty(this.State) || IsValidState)));
+                return !(String.IsNullOrEmpty(Raw) && String.IsNullOrEmpty(State) && String.IsNullOrEmpty(Country) && String.IsNullOrEmpty(City));
             }
 
         }
