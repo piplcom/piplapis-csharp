@@ -31,9 +31,9 @@ namespace Pipl.APIs.Search
         public static SearchConfiguration DefaultConfiguration;
 
         // HTTP URL
-        private static string BaseUrlHttp = "http://api.pipl.com/search/v4/?";
+        private static string BaseUrlHttp = "http://api.pipl.com/search/?";
         // HTTPS is also supported:
-        private static string BaseUrlHttpS = "https://api.pipl.com/search/v4/?";
+        private static string BaseUrlHttpS = "https://api.pipl.com/search/?";
 
         // static CTOR
         static SearchAPIRequest()
@@ -92,6 +92,10 @@ namespace Pipl.APIs.Search
                 res.Add("search_pointer", Person.SearchPointer);
             if (EffectiveConfiguration.MinimumMatch != null){
                 res.Add("minimum_match", ((float) EffectiveConfiguration.MinimumMatch).ToString(CultureInfo.CreateSpecificCulture("en-US")));
+            }
+            if (EffectiveConfiguration.MatchRequirements != null)
+            {
+                res.Add("match_requirements", EffectiveConfiguration.MatchRequirements);
             }
                 
 
@@ -192,7 +196,14 @@ namespace Pipl.APIs.Search
             this.Person = person;
             Person.AddFields(fields);
 
-            Url = (EffectiveConfiguration.UseHttps) ? BaseUrlHttpS : BaseUrlHttp;
+            if (String.IsNullOrEmpty(EffectiveConfiguration.Url))
+            {
+                Url = (EffectiveConfiguration.UseHttps) ? BaseUrlHttpS : BaseUrlHttp;
+            }
+            else
+            {
+                Url = EffectiveConfiguration.Url;
+            }
         }
 
 
@@ -230,6 +241,62 @@ namespace Pipl.APIs.Search
             }
         }
 
+        /**
+         * Send the request and return the response or raise SearchAPIError.
+         * <p/>
+         *
+         * @param strictValidation      A bool argument that's passed to the
+         *                              validateQueryParams method.
+         * @return SearchAPIResponse object containing the response
+         * @throws ArgumentException    Raises ArgumentException (raised from validateQueryParams)
+         * @throws WebException         WebException
+         * @throws SearchAPIError       SearchAPIError with api specific error. 
+         */
+        public SearchAPIResponse Send(bool strictValidation = true)
+        {
+            ValidateQueryParams(strictValidation);
+            TaskCompletionSource<SearchAPIResponse> taskCompletionSource = new TaskCompletionSource<SearchAPIResponse>();
+
+            using (WebClient client = new WebClient())
+            {
+                Uri uri = new Uri(Url);
+                try
+                {
+                    byte[] response = client.UploadValues(Url, _getUrlParams());
+                    return JsonConvert.DeserializeObject<SearchAPIResponse>(System.Text.Encoding.UTF8.GetString(response));
+                }
+                catch (WebException e)
+                {
+                    if (e.Response == null)
+                    {
+                        throw e;
+                    }
+                    string result;
+                    using (StreamReader sr = new StreamReader(e.Response.GetResponseStream()))
+                    {
+                        result = sr.ReadToEnd();
+                    }
+                    Dictionary<string, object> err = null;
+                    err = JsonConvert.DeserializeObject<Dictionary<string, object>>(result);
+
+                    if (!err.ContainsKey("error"))
+                    {
+                        throw e;
+                    }
+                    string error = err["error"].ToString();
+                    if (!err.ContainsKey("@http_status_code"))
+                    {
+                        throw e;
+                    }
+                    int httpStatusCode;
+                    if (!int.TryParse(err["@http_status_code"].ToString(), out httpStatusCode))
+                    {
+                        throw e;
+                    }
+                    throw new SearchAPIError(error, httpStatusCode);
+                }
+            }
+        }
 
         /**
          * Send the request and return the response or raise SearchAPIError.

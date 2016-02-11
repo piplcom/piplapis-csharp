@@ -5,10 +5,11 @@ using System.Runtime.Serialization;
 using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using Pipl.APIs.Utils;
 
 namespace Pipl.APIs.Data.Enums
 {
-    [JsonConverter(typeof(StringEnumConverter))]
+    [JsonConverter(typeof(TolerantStringEnumConverter))]
     public enum GenderTypes
     {
         [EnumMember(Value = "male")]

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
 namespace Pipl.APIs.Data.Fields
@@ -69,6 +70,61 @@ namespace Pipl.APIs.Data.Fields
             bool? showFavicon = null, bool? zoomFace = null, 
             bool useHttps = false)
         {
+            return Image.GenerateRedundantThumbnailUrl(this, null, width, height, showFavicon, zoomFace, useHttps);
+        }
+
+        /**
+         * @param first_image
+         *            Image, The first choice. If available, the URL will link to this image.
+         * @param second_image
+         *            Image, The backup choice.
+         * @param width
+         *            Requested thumbnail width in pixels, minimum 100, maximum 500.
+         * @param height
+         *            Requested thumbnail height in pixels, minimum 100, maximum 500
+         * @param faviconDomain
+         *            Optional, default is true
+         *            the Domain of the website where the image came from,
+         *            the favicon will be added to the corner of the thumbnail,
+         *            recommended for copyright reasones. 
+         *            IMPORTANT: Don't assume that the Domain of the website is the Domain from `imageUrl`,
+         *            it's possible that domain1.com hosts its images on domain2.com.
+         * @param zoomFace
+         *            Optional, default is true
+         *            Indicates whether you want the thumbnail to zoom on the
+         *            face in the image (in case there is a face) or not.
+         * @param useHttps
+         *            Optional, default is false
+         *            Indicates whether to use https(true) or http(false)
+         * @return
+         *            string with the thumbnail's url
+         * @throws ArgumentException
+         *             is thrown in case of illegal parameters.
+         */
+        public static string GenerateRedundantThumbnailUrl(Image firstImage, Image secondImage, int width, int height,
+            bool? showFavicon = null, bool? zoomFace = null,
+            bool useHttps = false)
+        {
+            if (firstImage == null && secondImage == null)
+            {
+                throw new ArgumentException("Please provide at least one image.");
+            }
+
+            List<String> tokens = new List<string>();
+
+            if (firstImage != null && !String.IsNullOrEmpty(firstImage.ThumbnailToken))
+            {
+                tokens.Add(firstImage.ThumbnailToken);
+            }
+            if (secondImage != null && !String.IsNullOrEmpty(secondImage.ThumbnailToken))
+            {
+                tokens.Add(secondImage.ThumbnailToken);
+            }
+            if (tokens.Count == 0)
+            {
+                throw new ArgumentException("You can only generate thumbnail URLs for image objects with a thumbnail token.");
+            }
+
             if (!(MinPixels <= height && height <= MaxPixels && MinPixels <= width && width <= MaxPixels))
             {
                 throw new ArgumentException(
@@ -77,14 +133,13 @@ namespace Pipl.APIs.Data.Fields
 
             string thumbnailUrl;
             string url;
-
+            
             url = useHttps ? BaseUrlHttpS : BaseUrlHttp;
 
-            string test = String.Format("{0}", ThumbnailToken);
             thumbnailUrl =
-                String.Format("{0}&token={1}&width={2}&height={3}",
+                String.Format("{0}&tokens={1}&width={2}&height={3}",
                     url,
-                    ThumbnailToken,
+                    Regex.Replace(String.Join(",", tokens), "&dsid=\\d+", ""),
                     Uri.EscapeDataString(width.ToString()),
                     Uri.EscapeDataString(height.ToString()));
             if (showFavicon != null)

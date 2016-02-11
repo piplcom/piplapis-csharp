@@ -38,6 +38,9 @@ namespace Pipl.APIs.Data.Containers
         [JsonProperty("@search_pointer")]
         public string SearchPointer { get; set; }
 
+        [JsonProperty("@inferred")]
+        public bool Inferred { get; set; }
+
         /**
          * @param fields             A List of <code>Field</code> objects
          * @param relationships      A List of <code>Relationship</code> objects

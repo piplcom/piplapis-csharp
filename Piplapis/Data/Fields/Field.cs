@@ -15,6 +15,12 @@ namespace Pipl.APIs.Data.Fields
         [JsonProperty("@valid_since")]
         public DateTime? ValidSince { get; set; }
 
+        [JsonProperty("@last_seen")]
+        public DateTime? LastSeen { get; set; }
+
+        [JsonProperty("@current")]
+        public bool? Current { get; set; }
+
         [JsonProperty("@inferred")]
         public bool? Inferred { get; set; }
 

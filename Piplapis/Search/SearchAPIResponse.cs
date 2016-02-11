@@ -54,8 +54,14 @@ namespace Pipl.APIs.Search
         [JsonProperty("sources")]
         public List<Source> Sources { get; set; }
 
+        [JsonProperty("available_data")]
+        public AvailableData AvailableData { get; set; }
+
         [JsonProperty("warnings")]
         public List<string> Warnings { get; set; }
+
+        [JsonProperty("match_requirements")]
+        public string MatchRequirements { get; set; }
 
         [JsonProperty("@search_id")]
         public string SearchId { get; set; }

@@ -10,7 +10,7 @@
     <projectUrl>http://pipl.com/dev</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Update to v4.</releaseNotes>
-    <copyright>Copyright 2015</copyright>
+    <releaseNotes>Update to v5.</releaseNotes>
+    <copyright>Copyright 2016</copyright>
   </metadata>
 </package>

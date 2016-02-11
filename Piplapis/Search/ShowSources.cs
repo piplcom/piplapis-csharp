@@ -11,6 +11,8 @@ namespace Pipl.APIs.Search
     {
         [EnumMember(Value="false")]
         False,
+        [EnumMember(Value = "true")]
+        True,
         [EnumMember(Value = "all")]
         All,
         [EnumMember(Value = "matching")]

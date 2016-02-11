@@ -14,7 +14,8 @@ namespace Pipl.APIs.Search
         public bool? LiveFeeds { get; set; }
         public float? MinimumMatch { get; set; }
         public bool UseHttps { get; set; }
-
+        public string MatchRequirements { get; set; }
+        public string Url { get; set; }
         /**
          * @param ApiKey            A valid API key (use "sample_key" for experimenting).
          *                          Note that you can set a default API key
@@ -33,14 +34,16 @@ namespace Pipl.APIs.Search
          * @param minimum_match     float? value range: 0-1 (default is None).
          * @param useHttps          Optional, default is false
          *                          Indicates whether to use https(true) or http(false)
+         * @param matchRequirements String: a match requirements criteria. This criteria defines what fields
+         *                          must be present in an API response in order for it to be returned as a match. default null
          */
 
         public const String DefaultApiKey = "sample_key";
 
         public SearchConfiguration(string apiKey = SearchConfiguration.DefaultApiKey,
                                 float? minimumProbability = null, ShowSources? showSources = null,
-                                bool? hideSponsored = null, bool? liveFeeds = null, float? minimumMatch = null, 
-                                bool useHttps = false)
+                                bool? hideSponsored = null, bool? liveFeeds = null, float? minimumMatch = null,
+                                bool useHttps = false, string matchRequirements = null, string url= null)
         {
             this.ApiKey = apiKey;
             this.MinimumProbability = minimumProbability;
@@ -49,6 +52,8 @@ namespace Pipl.APIs.Search
             this.LiveFeeds = liveFeeds;
             this.MinimumMatch = minimumMatch;
             this.UseHttps = useHttps;
+            this.MatchRequirements = matchRequirements;
+            this.Url = url;
         }
     }
 }
