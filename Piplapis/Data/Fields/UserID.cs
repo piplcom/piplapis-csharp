@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using Newtonsoft.Json;
 
 namespace Pipl.APIs.Data.Fields
@@ -14,6 +15,8 @@ namespace Pipl.APIs.Data.Fields
      */
     public class UserID : Field
     {
+        private static Regex ValidateSearchable = new Regex("\\S+@\\S+");
+
         [JsonProperty("content")]
         public string Content { get; set; }
 
@@ -28,6 +31,15 @@ namespace Pipl.APIs.Data.Fields
             if (String.IsNullOrEmpty(this.Content))
                 return "";
             return this.Content;
+        }
+
+        [JsonIgnore]
+        public override bool IsSearchable
+        {
+            get
+            {
+                return !String.IsNullOrEmpty(this.Content) && ValidateSearchable.IsMatch(this.Content);
+            }
         }
     }
 }

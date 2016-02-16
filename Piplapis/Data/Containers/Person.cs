@@ -103,6 +103,28 @@ namespace Pipl.APIs.Data.Containers
                         return true;
                     }
                 }
+                foreach (Fields.UserID userid in this.UserIDs)
+                {
+                    if (userid.IsSearchable)
+                    {
+                        return true;
+                    }
+                }
+                foreach (Fields.URL url in this.Urls)
+                {
+                    if (url.IsSearchable)
+                    {
+                        return true;
+                    }
+                }
+                foreach (Fields.Address address in this.Addresses)
+                {
+                    if (address.IsSoleSearchable)
+                    {
+                        return true;
+                    }
+                }
+
                 return false;
             }
         }

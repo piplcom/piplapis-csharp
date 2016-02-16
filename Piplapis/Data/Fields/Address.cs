@@ -116,6 +116,20 @@ namespace Pipl.APIs.Data.Fields
         }
 
         /**
+         * @return A bool value that indicates whether the address is a valid
+         *         address to search by as sole given field
+         */
+        [JsonIgnore]
+        public bool IsSoleSearchable
+        {
+            get
+            {
+                return !(String.IsNullOrEmpty(Raw) && (String.IsNullOrEmpty(City) || String.IsNullOrEmpty(Street) || String.IsNullOrEmpty(House)));
+            }
+
+        }
+
+        /**
          * @return A bool value that indicates whether the object's Country is a
          *         valid Country code.
          */

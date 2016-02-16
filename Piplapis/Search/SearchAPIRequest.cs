@@ -228,7 +228,7 @@ namespace Pipl.APIs.Search
             }
             if (!Person.IsSearchable)
             {
-                throw new ArgumentException("No valid name/username/phone/email in request");
+                throw new ArgumentException("No valid name/username/userid/phone/email/url in request");
             }
             if (strict && Person.UnsearchableFields.Count() > 0)
             {
