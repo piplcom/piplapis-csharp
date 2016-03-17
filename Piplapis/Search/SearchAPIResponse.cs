@@ -63,6 +63,9 @@ namespace Pipl.APIs.Search
         [JsonProperty("match_requirements")]
         public string MatchRequirements { get; set; }
 
+        [JsonProperty("source_category_requirements")]
+        public string SourceCategoryRequirements { get; set; }
+
         [JsonProperty("@search_id")]
         public string SearchId { get; set; }
 

@@ -97,6 +97,10 @@ namespace Pipl.APIs.Search
             {
                 res.Add("match_requirements", EffectiveConfiguration.MatchRequirements);
             }
+            if (EffectiveConfiguration.SourceCategoryRequirements != null)
+            {
+                res.Add("source_category_requirements", EffectiveConfiguration.SourceCategoryRequirements);
+            }
                 
 
             return res;

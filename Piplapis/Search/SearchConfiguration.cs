@@ -15,6 +15,7 @@ namespace Pipl.APIs.Search
         public float? MinimumMatch { get; set; }
         public bool UseHttps { get; set; }
         public string MatchRequirements { get; set; }
+        public string SourceCategoryRequirements { get; set; }
         public string Url { get; set; }
         /**
          * @param ApiKey            A valid API key (use "sample_key" for experimenting).
@@ -36,6 +37,10 @@ namespace Pipl.APIs.Search
          *                          Indicates whether to use https(true) or http(false)
          * @param matchRequirements String: a match requirements criteria. This criteria defines what fields
          *                          must be present in an API response in order for it to be returned as a match. default null
+         *                          
+         * @param sourceCategoryRequirements: String: A source category requirements criteria. This criteria defines
+         *                          what source categories must be present in an API response in order for it to be
+         *                          returned as a match. For example: "personal_profiles" or "personal_profiles or professional_and_business"
          */
 
         public const String DefaultApiKey = "sample_key";
@@ -43,7 +48,8 @@ namespace Pipl.APIs.Search
         public SearchConfiguration(string apiKey = SearchConfiguration.DefaultApiKey,
                                 float? minimumProbability = null, ShowSources? showSources = null,
                                 bool? hideSponsored = null, bool? liveFeeds = null, float? minimumMatch = null,
-                                bool useHttps = false, string matchRequirements = null, string url= null)
+                                bool useHttps = false, string matchRequirements = null,
+                                string sourceCategoryRequirements = null, string url = null)
         {
             this.ApiKey = apiKey;
             this.MinimumProbability = minimumProbability;
@@ -53,6 +59,7 @@ namespace Pipl.APIs.Search
             this.MinimumMatch = minimumMatch;
             this.UseHttps = useHttps;
             this.MatchRequirements = matchRequirements;
+            this.SourceCategoryRequirements = sourceCategoryRequirements;
             this.Url = url;
         }
     }
