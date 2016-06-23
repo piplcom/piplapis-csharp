@@ -69,6 +69,9 @@ namespace Pipl.APIs.Search
         [JsonProperty("@search_id")]
         public string SearchId { get; set; }
 
+        [JsonProperty("@persons_count")]
+        public int PersonsCount { get; set; }
+
         /**
          * @param query              A Person object with the query as interpreted by Pipl.
          * @param person             A Person object with data about the person in the query.
@@ -78,9 +81,11 @@ namespace Pipl.APIs.Search
          * @param warnings           A list of strings. A warning is returned when the query
          *                           contains a non-critical error and the search can still run.
          * @param @search_id         string
+         * 
+         * @param @persons_count     int. The number of persons in this response.
          */
         public SearchAPIResponse(Person query = null, Person person = null, List<Person> possible_Persons = null, List<Source> sources = null,
-                                 List<string> warnings = null, string searchId = null)
+                                 List<string> warnings = null, string searchId = null, int? personsCount = null)
         {
             this.Query = query;
             this.Person = person;
@@ -88,6 +93,16 @@ namespace Pipl.APIs.Search
             this.Sources = sources;
             this.Warnings = warnings;
             this.SearchId = searchId;
+            if (personsCount == null)
+            {
+                if (this.Person != null) {
+                    personsCount = 1;
+                } else {
+                    personsCount = this.PossiblePersons == null ? 0 : this.PossiblePersons.Count();
+                }
+            }
+            this.PersonsCount = (int)personsCount;
+
         }
 
         /**
