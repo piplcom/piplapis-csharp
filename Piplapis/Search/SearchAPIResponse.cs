@@ -72,6 +72,8 @@ namespace Pipl.APIs.Search
         [JsonProperty("@persons_count")]
         public int PersonsCount { get; set; }
 
+        public string RawJSON { get; set; }
+
         /**
          * @param query              A Person object with the query as interpreted by Pipl.
          * @param person             A Person object with data about the person in the query.
@@ -102,6 +104,7 @@ namespace Pipl.APIs.Search
                 }
             }
             this.PersonsCount = (int)personsCount;
+            this.RawJSON = null;
 
         }
 

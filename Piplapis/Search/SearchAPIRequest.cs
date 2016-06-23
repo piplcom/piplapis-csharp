@@ -267,7 +267,10 @@ namespace Pipl.APIs.Search
                 try
                 {
                     byte[] response = client.UploadValues(Url, _getUrlParams());
-                    return JsonConvert.DeserializeObject<SearchAPIResponse>(System.Text.Encoding.UTF8.GetString(response));
+                    string jsonResp = System.Text.Encoding.UTF8.GetString(response);
+                    var res = JsonConvert.DeserializeObject<SearchAPIResponse>(System.Text.Encoding.UTF8.GetString(response));
+                    res.RawJSON = jsonResp;
+                    return res;
                 }
                 catch (WebException e)
                 {
@@ -334,7 +337,9 @@ namespace Pipl.APIs.Search
         {
             if (e.Error == null)
             {
-                var res = JsonConvert.DeserializeObject<SearchAPIResponse>(System.Text.Encoding.UTF8.GetString(e.Result));
+                string jsonResp = System.Text.Encoding.UTF8.GetString(e.Result);
+                var res = JsonConvert.DeserializeObject<SearchAPIResponse>(jsonResp);
+                res.RawJSON = jsonResp;
                 taskCompletionSource.SetResult(res);
                 return;
             }
