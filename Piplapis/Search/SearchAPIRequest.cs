@@ -270,6 +270,7 @@ namespace Pipl.APIs.Search
                     string jsonResp = System.Text.Encoding.UTF8.GetString(response);
                     var res = JsonConvert.DeserializeObject<SearchAPIResponse>(System.Text.Encoding.UTF8.GetString(response));
                     res.RawJSON = jsonResp;
+                    _update_response_headers(client, res);
                     return res;
                 }
                 catch (WebException e)
@@ -325,7 +326,7 @@ namespace Pipl.APIs.Search
                 Uri uri = new Uri(Url);
                 client.UploadValuesCompleted += (s, e) =>
                 {
-                    _searchUploadValuesCompletedEventHandler(e, taskCompletionSource);
+                    _searchUploadValuesCompletedEventHandler((WebClient)s, e, taskCompletionSource);
                 };
                 client.UploadValuesAsync(uri, null, _getUrlParams(), null);
             }
@@ -333,13 +334,14 @@ namespace Pipl.APIs.Search
             return taskCompletionSource.Task;
         }
 
-        private void _searchUploadValuesCompletedEventHandler(UploadValuesCompletedEventArgs e, TaskCompletionSource<SearchAPIResponse> taskCompletionSource)
+        private void _searchUploadValuesCompletedEventHandler(WebClient client, UploadValuesCompletedEventArgs e, TaskCompletionSource<SearchAPIResponse> taskCompletionSource)
         {
             if (e.Error == null)
             {
                 string jsonResp = System.Text.Encoding.UTF8.GetString(e.Result);
                 var res = JsonConvert.DeserializeObject<SearchAPIResponse>(jsonResp);
                 res.RawJSON = jsonResp;
+                _update_response_headers(client, res);
                 taskCompletionSource.SetResult(res);
                 return;
             }
@@ -401,6 +403,61 @@ namespace Pipl.APIs.Search
             }
             taskCompletionSource.SetException(new SearchAPIError(error, httpStatusCode));
             return;
+        }
+
+        private void _update_response_headers(WebClient client, SearchAPIResponse resp)
+        {
+            WebHeaderCollection headers = client.ResponseHeaders;
+
+
+            string value = headers.Get("X-APIKey-QPS-Allotted");
+            int intVal;
+            if (value != null) 
+            {
+                if (Int32.TryParse(value, out intVal))
+                {
+                    resp.QpsAllotted = intVal;
+                }
+            }
+
+            value = headers.Get("X-APIKey-QPS-Current");
+            if (value != null)
+            {
+                if (Int32.TryParse(value, out intVal))
+                {
+                    resp.QpsCurrent = intVal;
+                }
+            }
+
+            value = headers.Get("X-APIKey-Quota-Allotted");
+            if (value != null)
+            {
+                if (Int32.TryParse(value, out intVal))
+                {
+                    resp.QuotaAllotted = intVal;
+                }
+            }
+
+            value = headers.Get("X-APIKey-Quota-Current");
+            if (value != null)
+            {
+                if (Int32.TryParse(value, out intVal))
+                {
+                    resp.QuotaCurrent = intVal;
+                }
+            }
+
+            value = headers.Get("X-Quota-Reset");
+            if (value != null)
+            {
+                try
+                {
+                    value = value.Replace(" UTC", " +0");
+                    resp.QuotaReset = DateTime.ParseExact(value, "dddd, MMMM dd, yyyy hh:mm:ss tt z", CultureInfo.InvariantCulture);
+                }
+                catch {}
+            }
+
         }
     }
 }
