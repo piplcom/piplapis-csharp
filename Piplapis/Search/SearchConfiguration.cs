@@ -14,6 +14,7 @@ namespace Pipl.APIs.Search
         public bool? LiveFeeds { get; set; }
         public float? MinimumMatch { get; set; }
         public bool UseHttps { get; set; }
+        public bool? InferPersons { get; set; }
         public string MatchRequirements { get; set; }
         public string SourceCategoryRequirements { get; set; }
         public string Url { get; set; }
@@ -35,6 +36,8 @@ namespace Pipl.APIs.Search
          * @param minimum_match     float? value range: 0-1 (default is None).
          * @param useHttps          Optional, default is false
          *                          Indicates whether to use https(true) or http(false)
+         * @param inferPersons      boolean (default False),  whether the API should return person responses 
+         *                          made up solely from data inferred by statistical analysis.
          * @param matchRequirements String: a match requirements criteria. This criteria defines what fields
          *                          must be present in an API response in order for it to be returned as a match. default null
          *                          
@@ -48,7 +51,7 @@ namespace Pipl.APIs.Search
         public SearchConfiguration(string apiKey = SearchConfiguration.DefaultApiKey,
                                 float? minimumProbability = null, ShowSources? showSources = null,
                                 bool? hideSponsored = null, bool? liveFeeds = null, float? minimumMatch = null,
-                                bool useHttps = false, string matchRequirements = null,
+                                bool useHttps = false, string matchRequirements = null, bool? inferPersons = false,
                                 string sourceCategoryRequirements = null, string url = null)
         {
             this.ApiKey = apiKey;
@@ -58,6 +61,7 @@ namespace Pipl.APIs.Search
             this.LiveFeeds = liveFeeds;
             this.MinimumMatch = minimumMatch;
             this.UseHttps = useHttps;
+            this.InferPersons = inferPersons;
             this.MatchRequirements = matchRequirements;
             this.SourceCategoryRequirements = sourceCategoryRequirements;
             this.Url = url;

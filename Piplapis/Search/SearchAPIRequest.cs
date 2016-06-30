@@ -93,6 +93,10 @@ namespace Pipl.APIs.Search
             if (EffectiveConfiguration.MinimumMatch != null){
                 res.Add("minimum_match", ((float) EffectiveConfiguration.MinimumMatch).ToString(CultureInfo.CreateSpecificCulture("en-US")));
             }
+            if (EffectiveConfiguration.InferPersons != null)
+            {
+                res.Add("infer_persons", EffectiveConfiguration.InferPersons.ToString());
+            }
             if (EffectiveConfiguration.MatchRequirements != null)
             {
                 res.Add("match_requirements", EffectiveConfiguration.MatchRequirements);
