@@ -274,7 +274,7 @@ namespace Pipl.APIs.Search
                     string jsonResp = System.Text.Encoding.UTF8.GetString(response);
                     var res = JsonConvert.DeserializeObject<SearchAPIResponse>(System.Text.Encoding.UTF8.GetString(response));
                     res.RawJSON = jsonResp;
-                    _update_response_headers(client, res);
+                    _update_response_headers(webClient: client, response: res);
                     return res;
                 }
                 catch (WebException e)
@@ -305,7 +305,9 @@ namespace Pipl.APIs.Search
                     {
                         throw e;
                     }
-                    throw new SearchAPIError(error, httpStatusCode);
+                    SearchAPIError exc = new SearchAPIError(error, httpStatusCode);
+                    _update_response_headers(webResponse: e.Response, errResponse: exc);
+                    throw exc;
                 }
             }
         }
@@ -345,7 +347,7 @@ namespace Pipl.APIs.Search
                 string jsonResp = System.Text.Encoding.UTF8.GetString(e.Result);
                 var res = JsonConvert.DeserializeObject<SearchAPIResponse>(jsonResp);
                 res.RawJSON = jsonResp;
-                _update_response_headers(client, res);
+                _update_response_headers(webClient: client, response: res);
                 taskCompletionSource.SetResult(res);
                 return;
             }
@@ -405,13 +407,29 @@ namespace Pipl.APIs.Search
                 taskCompletionSource.SetException(we);
                 return;
             }
-            taskCompletionSource.SetException(new SearchAPIError(error, httpStatusCode));
+            SearchAPIError exc = new SearchAPIError(error, httpStatusCode);
+            _update_response_headers(webResponse: response, errResponse: exc);
+            taskCompletionSource.SetException(exc);
             return;
         }
 
-        private void _update_response_headers(WebClient client, SearchAPIResponse resp)
+        private void _update_response_headers(WebClient webClient= null, WebResponse webResponse = null, SearchAPIResponse response = null, SearchAPIError errResponse = null)
         {
-            WebHeaderCollection headers = client.ResponseHeaders;
+            
+            WebHeaderCollection headers = null;
+
+            if (webClient != null)
+            {
+                headers = webClient.ResponseHeaders;
+            } 
+            else if (webResponse != null) {
+                headers = webResponse.Headers;
+            }
+
+            if (headers == null)
+            {
+                return;
+            }
 
 
             string value = headers.Get("X-APIKey-QPS-Allotted");
@@ -420,7 +438,13 @@ namespace Pipl.APIs.Search
             {
                 if (Int32.TryParse(value, out intVal))
                 {
-                    resp.QpsAllotted = intVal;
+                    if (response != null)
+                    {
+                        response.QpsAllotted = intVal;
+                    }
+                    if (errResponse != null) {
+                        errResponse.QpsAllotted = intVal;
+                    }
                 }
             }
 
@@ -429,7 +453,14 @@ namespace Pipl.APIs.Search
             {
                 if (Int32.TryParse(value, out intVal))
                 {
-                    resp.QpsCurrent = intVal;
+                    if (response != null)
+                    {
+                        response.QpsCurrent = intVal;
+                    }
+                    if (errResponse != null)
+                    {
+                        errResponse.QpsCurrent = intVal;
+                    }
                 }
             }
 
@@ -438,7 +469,14 @@ namespace Pipl.APIs.Search
             {
                 if (Int32.TryParse(value, out intVal))
                 {
-                    resp.QuotaAllotted = intVal;
+                    if (response != null)
+                    {
+                        response.QuotaAllotted = intVal;
+                    }
+                    if (errResponse != null)
+                    {
+                        errResponse.QuotaAllotted = intVal;
+                    }
                 }
             }
 
@@ -447,7 +485,14 @@ namespace Pipl.APIs.Search
             {
                 if (Int32.TryParse(value, out intVal))
                 {
-                    resp.QuotaCurrent = intVal;
+                    if (response != null)
+                    {
+                        response.QuotaCurrent = intVal;
+                    }
+                    if (errResponse != null)
+                    {
+                        errResponse.QuotaCurrent = intVal;
+                    }
                 }
             }
 
@@ -457,7 +502,15 @@ namespace Pipl.APIs.Search
                 try
                 {
                     value = value.Replace(" UTC", " +0");
-                    resp.QuotaReset = DateTime.ParseExact(value, "dddd, MMMM dd, yyyy hh:mm:ss tt z", CultureInfo.InvariantCulture);
+                    DateTime quotaReset = DateTime.ParseExact(value, "dddd, MMMM dd, yyyy hh:mm:ss tt z", CultureInfo.InvariantCulture);
+                    if (response != null)
+                    {
+                        response.QuotaReset = quotaReset;
+                    }
+                    if (errResponse != null)
+                    {
+                        errResponse.QuotaReset = quotaReset;
+                    }
                 }
                 catch {}
             }

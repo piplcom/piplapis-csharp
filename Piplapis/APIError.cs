@@ -19,6 +19,16 @@ namespace Pipl.APIs
         [JsonProperty("warnings")]
         public List<string> Warnings { get; set; }
 
+        public int? QpsAllotted { get; set; }
+
+        public int? QpsCurrent { get; set; }
+
+        public int? QuotaAllotted { get; set; }
+
+        public int? QuotaCurrent { get; set; }
+
+        public DateTime? QuotaReset { get; set; }
+
 	    public APIError(string error, int httpStatusCode, List<string> warnings) : base(error)
         {
 		    this.Error = error;
