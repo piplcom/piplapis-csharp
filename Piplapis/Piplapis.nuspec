@@ -10,7 +10,10 @@
     <projectUrl>http://pipl.com/dev</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>Update to v5.</releaseNotes>
+    <releaseNotes>- Add InferPerson parameter to the request.
+	- Add RawJSON and PersonCount properties to the response.
+	- Add quota and qps information to the response.	
+	</releaseNotes>
     <copyright>Copyright 2016</copyright>
   </metadata>
 </package>
