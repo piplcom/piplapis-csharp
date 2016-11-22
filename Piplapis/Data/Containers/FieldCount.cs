@@ -53,5 +53,11 @@ namespace Pipl.APIs.Data.Containers
         [JsonProperty("images")]
         public int Images { get; set; }
 
+        [JsonProperty("mobile_phones")]
+        public int MobilePhones { get; set; }
+
+        [JsonProperty("landline_phones")]
+        public int LandlinePhones { get; set; }
+
     }
 }
