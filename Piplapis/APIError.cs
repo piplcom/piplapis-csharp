@@ -29,6 +29,21 @@ namespace Pipl.APIs
 
         public DateTime? QuotaReset { get; set; }
 
+        public int? QpsLiveAllotted { get; set; }
+
+        public int? QpsLiveCurrent { get; set; }
+
+        public int? QpsDemoAllotted { get; set; }
+
+        public int? QpsDemoCurrent { get; set; }
+
+        public int? DemoUsageAlloted { get; set; }
+
+        public int? DemoUsageCurrent { get; set; }
+
+        public DateTime? DemoUsageExpiry { get; set; }
+
+
 	    public APIError(string error, int httpStatusCode, List<string> warnings) : base(error)
         {
 		    this.Error = error;

@@ -432,7 +432,7 @@ namespace Pipl.APIs.Search
             }
 
 
-            string value = headers.Get("X-APIKey-QPS-Allotted");
+            string value = headers.Get("X-QPS-Allotted");
             int intVal;
             if (value != null) 
             {
@@ -448,7 +448,7 @@ namespace Pipl.APIs.Search
                 }
             }
 
-            value = headers.Get("X-APIKey-QPS-Current");
+            value = headers.Get("X-QPS-Current");
             if (value != null)
             {
                 if (Int32.TryParse(value, out intVal))
@@ -496,6 +496,70 @@ namespace Pipl.APIs.Search
                 }
             }
 
+            value = headers.Get("X-QPS-Live-Allotted");
+            if (value != null)
+            {
+                if (Int32.TryParse(value, out intVal))
+                {
+                    if (response != null)
+                    {
+                        response.QpsLiveAllotted = intVal;
+                    }
+                    if (errResponse != null)
+                    {
+                        errResponse.QpsLiveAllotted = intVal;
+                    }
+                }
+            }
+
+            value = headers.Get("X-QPS-Live-Current");
+            if (value != null)
+            {
+                if (Int32.TryParse(value, out intVal))
+                {
+                    if (response != null)
+                    {
+                        response.QpsLiveCurrent = intVal;
+                    }
+                    if (errResponse != null)
+                    {
+                        errResponse.QpsLiveCurrent = intVal;
+                    }
+                }
+            }
+
+            value = headers.Get("X-QPS-Demo-Allotted");
+            if (value != null)
+            {
+                if (Int32.TryParse(value, out intVal))
+                {
+                    if (response != null)
+                    {
+                        response.QpsDemoAllotted = intVal;
+                    }
+                    if (errResponse != null)
+                    {
+                        errResponse.QpsDemoAllotted = intVal;
+                    }
+                }
+            }
+
+            value = headers.Get("X-QPS-Demo-Current");
+            if (value != null)
+            {
+                if (Int32.TryParse(value, out intVal))
+                {
+                    if (response != null)
+                    {
+                        response.QpsDemoCurrent = intVal;
+                    }
+                    if (errResponse != null)
+                    {
+                        errResponse.QpsDemoCurrent = intVal;
+                    }
+                }
+            }
+
             value = headers.Get("X-Quota-Reset");
             if (value != null)
             {
@@ -513,6 +577,57 @@ namespace Pipl.APIs.Search
                     }
                 }
                 catch {}
+            }
+
+            value = headers.Get("X-Demo-Usage-Allotted");
+            if (value != null)
+            {
+                if (Int32.TryParse(value, out intVal))
+                {
+                    if (response != null)
+                    {
+                        response.DemoUsageAlloted = intVal;
+                    }
+                    if (errResponse != null)
+                    {
+                        errResponse.DemoUsageAlloted = intVal;
+                    }
+                }
+            }
+
+            value = headers.Get("X-Demo-Usage-Current");
+            if (value != null)
+            {
+                if (Int32.TryParse(value, out intVal))
+                {
+                    if (response != null)
+                    {
+                        response.DemoUsageCurrent = intVal;
+                    }
+                    if (errResponse != null)
+                    {
+                        errResponse.DemoUsageCurrent = intVal;
+                    }
+                }
+            }
+
+            value = headers.Get("X-Demo-Usage-Expiry");
+            if (value != null)
+            {
+                try
+                {
+                    value = value.Replace(" UTC", " +0");
+                    DateTime quotaReset = DateTime.ParseExact(value, "dddd, MMMM dd, yyyy hh:mm:ss tt z", CultureInfo.InvariantCulture);
+                    if (response != null)
+                    {
+                        response.DemoUsageExpiry = quotaReset;
+                    }
+                    if (errResponse != null)
+                    {
+                        errResponse.DemoUsageExpiry = quotaReset;
+                    }
+                }
+                catch { }
             }
 
         }

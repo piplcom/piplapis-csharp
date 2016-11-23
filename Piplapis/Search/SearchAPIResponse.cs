@@ -84,6 +84,20 @@ namespace Pipl.APIs.Search
 
         public DateTime? QuotaReset { get; set; }
 
+        public int? QpsLiveAllotted { get; set; }
+
+        public int? QpsLiveCurrent { get; set; }
+
+        public int? QpsDemoAllotted { get; set; }
+
+        public int? QpsDemoCurrent { get; set; }
+
+        public int? DemoUsageAlloted { get; set; }
+
+        public int? DemoUsageCurrent { get; set; }
+
+        public DateTime? DemoUsageExpiry { get; set; }
+
         /**
          * @param query              A Person object with the query as interpreted by Pipl.
          * @param person             A Person object with data about the person in the query.
