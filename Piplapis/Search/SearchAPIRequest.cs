@@ -35,10 +35,15 @@ namespace Pipl.APIs.Search
         // HTTPS is also supported:
         private static string BaseUrlHttpS = "https://api.pipl.com/search/?";
 
+        private static string ClientUserAgent;
+
         // static CTOR
         static SearchAPIRequest()
         {
             DefaultConfiguration = new SearchConfiguration();
+            Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+            ClientUserAgent = string.Format("piplapis/csharp/{0}.{1}.{2}", version.Major, version.Minor, version.Build);
+
         }
 
         #endregion
@@ -267,6 +272,7 @@ namespace Pipl.APIs.Search
 
             using (WebClient client = new WebClient())
             {
+                client.Headers.Add("User-Agent", ClientUserAgent);
                 Uri uri = new Uri(Url);
                 try
                 {
@@ -329,6 +335,7 @@ namespace Pipl.APIs.Search
 
             using (WebClient client = new WebClient())
             {
+                client.Headers.Add("User-Agent", ClientUserAgent);
                 Uri uri = new Uri(Url);
                 client.UploadValuesCompleted += (s, e) =>
                 {
