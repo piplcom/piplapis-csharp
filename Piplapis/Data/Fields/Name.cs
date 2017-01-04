@@ -76,7 +76,7 @@ namespace Pipl.APIs.Data.Fields
             return Display;
         }
 
-        private static Regex _nonAbc = new Regex("[^A-Za-z]");
+        private static Regex _nonAbc = new Regex("[\\W\\d]");
 
         /**
          * A bool value that indicates whether the name is a valid name to search
