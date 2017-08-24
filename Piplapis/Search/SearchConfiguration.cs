@@ -19,7 +19,7 @@ namespace Pipl.APIs.Search
         public string SourceCategoryRequirements { get; set; }
         public string Url { get; set; }
         /**
-         * @param ApiKey            A valid API key (use "sample_key" for experimenting).
+         * @param ApiKey            A valid API key
          *                          Note that you can set a default API key
          *                          (Pipl.APIs.Search.SearchAPIRequest.defaultApiKey = '<your_key>') instead of
          *                          passing it to each request object.
@@ -46,7 +46,7 @@ namespace Pipl.APIs.Search
          *                          returned as a match. For example: "personal_profiles" or "personal_profiles or professional_and_business"
          */
 
-        public const String DefaultApiKey = "sample_key";
+        public const String DefaultApiKey = "";
 
         public SearchConfiguration(string apiKey = SearchConfiguration.DefaultApiKey,
                                 float? minimumProbability = null, ShowSources? showSources = null,
