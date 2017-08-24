@@ -136,7 +136,7 @@ namespace Pipl.APIs.Search
          *                          IMPORTANT: Currently only US/Canada phones can be searched by
          *                          so country code is assumed to be 1, phones with different
          *                          country codes are considered invalid and will be ignored.
-         * @param username          username, minimum 4 chars
+         * @param username          username, minimum 3 chars
          * @param country           a 2 letter country code from:
          *                          http://en.wikipedia.org/wiki/ISO_3166-2
          * @param state             a state code from:

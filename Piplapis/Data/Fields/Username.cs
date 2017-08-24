@@ -45,7 +45,7 @@ namespace Pipl.APIs.Data.Fields
         {
             get
             {
-                return Content != null && Regex.Replace(Content, "[^\\w]", "").Length >= 4;
+                return Content != null && Regex.Replace(Content, "[^\\w]", "").Length >= 3;
             }
         }
 
