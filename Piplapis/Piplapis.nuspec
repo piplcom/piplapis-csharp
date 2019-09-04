@@ -10,9 +10,10 @@
     <projectUrl>http://pipl.com/dev</projectUrl>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>$description$</description>
-    <releaseNotes>- Add InferPerson parameter to the request.
-	- Add RawJSON and PersonCount properties to the response.
-	- Add quota and qps information to the response.	
+    <releaseNotes>
+  - Add top match.
+	- Add unit tests.
+	- Force https in request.
 	</releaseNotes>
     <copyright>Copyright 2016</copyright>
   </metadata>

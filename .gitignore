@@ -108,3 +108,5 @@ UpgradeLog*.XML
 .vs/
 
 MSTest.*
+
+*.nupkg
