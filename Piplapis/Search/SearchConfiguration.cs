@@ -16,6 +16,7 @@ namespace Pipl.APIs.Search
         public bool UseHttps { get; set; }
         public bool? InferPersons { get; set; }
         public string MatchRequirements { get; set; }
+        public bool? TopMatch { get; set; }
         public string SourceCategoryRequirements { get; set; }
         public string Url { get; set; }
         /**
@@ -34,8 +35,8 @@ namespace Pipl.APIs.Search
          * @param liveFeeds         bool (default true).
          *                          Whether to use live search.
          * @param minimum_match     float? value range: 0-1 (default is None).
-         * @param useHttps          Optional, default is false
-         *                          Indicates whether to use https(true) or http(false)
+         * @param useHttps          Always true, HTTP is forbidden.
+         *      
          * @param inferPersons      boolean (default False),  whether the API should return person responses 
          *                          made up solely from data inferred by statistical analysis.
          * @param matchRequirements String: a match requirements criteria. This criteria defines what fields
@@ -51,8 +52,8 @@ namespace Pipl.APIs.Search
         public SearchConfiguration(string apiKey = SearchConfiguration.DefaultApiKey,
                                 float? minimumProbability = null, ShowSources? showSources = null,
                                 bool? hideSponsored = null, bool? liveFeeds = null, float? minimumMatch = null,
-                                bool useHttps = false, string matchRequirements = null, bool? inferPersons = false,
-                                string sourceCategoryRequirements = null, string url = null)
+                                bool useHttps = true, string matchRequirements = null, bool? inferPersons = false,
+                                string sourceCategoryRequirements = null, string url = null, bool? topMatch = false)
         {
             this.ApiKey = apiKey;
             this.MinimumProbability = minimumProbability;
@@ -60,9 +61,10 @@ namespace Pipl.APIs.Search
             this.HideSponsored = hideSponsored;
             this.LiveFeeds = liveFeeds;
             this.MinimumMatch = minimumMatch;
-            this.UseHttps = useHttps;
+            this.UseHttps = true;
             this.InferPersons = inferPersons;
             this.MatchRequirements = matchRequirements;
+            this.TopMatch = topMatch;
             this.SourceCategoryRequirements = sourceCategoryRequirements;
             this.Url = url;
         }
