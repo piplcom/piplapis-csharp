@@ -106,3 +106,5 @@ Backup*/
 UpgradeLog*.XML
 
 .vs/
+
+MSTest.*
