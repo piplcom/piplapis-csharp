@@ -25,6 +25,6 @@ Getting Started & Code Snippets
 -------------------------------
 
 **Pipl's Search API**
-* Getting started - [https://pipl.com/dev/guide/getting_started](https://pipl.com/dev/guide/getting_started)
-* Code snippets - [https://pipl.com/dev/guide/code_snippets](https://pipl.com/dev/guide/code_snippets)
-* Full reference - [https://pipl.com/dev/reference](https://pipl.com/dev/reference)
+* API Portal - [https://pipl.com/api/](https://pipl.com/api/)
+* Code snippets - [https://docs.pipl.com/docs/code-snippets](https://docs.pipl.com/docs/code-snippets)
+* Full reference - [https://docs.pipl.com/reference/](https://docs.pipl.com/reference/)
