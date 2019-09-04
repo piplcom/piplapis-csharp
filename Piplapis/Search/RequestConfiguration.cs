@@ -33,8 +33,7 @@ namespace Pipl.APIs.Search
          *                          Whether to use live search.
          * @param search_pointer    SearchPointer
          * @param minimum_match     float? value range: 0-1 (default is None).
-         * @param useHttps          Optional, default is false
-         *                          Indicates whether to use https(true) or http(false)
+         * @param useHttps          Always true
          */
 
         public const String DefaultApiKey = "sample_key";
@@ -43,7 +42,7 @@ namespace Pipl.APIs.Search
                                 float? minimumProbability = null, ShowSources? showSources = null,
                                 bool? hideSponsored = null, bool? liveFeeds = null, 
                                 string searchPointer = null, float? minimumMatch = null, 
-                                bool useHttps = false)
+                                bool useHttps = true)
         {
             this.ApiKey = apiKey;
             this.MinimumProbability = minimumProbability;
@@ -52,7 +51,7 @@ namespace Pipl.APIs.Search
             this.LiveFeeds = liveFeeds;
             this.SearchPointer = searchPointer;
             this.MinimumMatch = minimumMatch;
-            this.UseHttps = useHttps;
+            this.UseHttps = true;
         }
     }
 }
