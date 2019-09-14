@@ -1,104 +1,22 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{E9921187-C395-422D-844A-6136C55CD6BC}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>piplclient</RootNamespace>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <RootNamespace>Pipl.APIs</RootNamespace>
     <AssemblyName>piplclient</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <Version>5.9.1</Version>
+    <PackageLicenseExpression>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseExpression>
+    <PackageId>piplapis-csharp</PackageId>
+    <Authors>Pipl</Authors>
+    <Company>Pipl</Company>
+    <Product>piplapis-csharp</Product>
+    <Copyright>Copyright © Pipl 2016</Copyright>
+    <PackageProjectUrl>http://pipl.com/dev</PackageProjectUrl>
+    <PackageReleaseNotes>Switch to .net standard</PackageReleaseNotes>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
-    <RunCodeAnalysis>false</RunCodeAnalysis>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <StartupObject />
-  </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\net40\Newtonsoft.Json.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Web" />
-    <Reference Include="Microsoft.CSharp" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="APIError.cs" />
-    <Compile Include="Data\Containers\AvailableData.cs" />
-    <Compile Include="Data\Containers\FieldCount.cs" />
-    <Compile Include="Data\Containers\FieldsContainer.cs" />
-    <Compile Include="Data\Containers\Person.cs" />
-    <Compile Include="Data\Containers\Source.cs" />
-    <Compile Include="Data\Enums\AddressTypes.cs" />
-    <Compile Include="Data\Enums\EmailTypes.cs" />
-    <Compile Include="Data\Enums\EthnicityTypes.cs" />
-    <Compile Include="Data\Enums\GenderTypes.cs" />
-    <Compile Include="Data\Enums\NameTypes.cs" />
-    <Compile Include="Data\Enums\PhoneTypes.cs" />
-    <Compile Include="Data\Enums\RelationshipTypes.cs" />
-    <Compile Include="Data\Enums\SourceCategories.cs" />
-    <Compile Include="Data\Fields\Address.cs" />
-    <Compile Include="Data\Fields\DOB.cs" />
-    <Compile Include="Data\Fields\DateRange.cs" />
-    <Compile Include="Data\Fields\Education.cs" />
-    <Compile Include="Data\Fields\Email.cs" />
-    <Compile Include="Data\Fields\Ethnicity.cs" />
-    <Compile Include="Data\Fields\Field.cs" />
-    <Compile Include="Data\Fields\Gender.cs" />
-    <Compile Include="Data\Fields\Image.cs" />
-    <Compile Include="Data\Fields\Job.cs" />
-    <Compile Include="Data\Fields\Language.cs" />
-    <Compile Include="Data\Fields\Name.cs" />
-    <Compile Include="Data\Fields\OriginCountry.cs" />
-    <Compile Include="Data\Fields\Phone.cs" />
-    <Compile Include="Data\Containers\Relationship.cs" />
-    <Compile Include="Data\Fields\Tag.cs" />
-    <Compile Include="Data\Fields\URL.cs" />
-    <Compile Include="Data\Fields\UserID.cs" />
-    <Compile Include="Data\Fields\Username.cs" />
-    <Compile Include="Data\Utils.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Search\SearchAPIError.cs" />
-    <Compile Include="Search\SearchAPIRequest.cs" />
-    <Compile Include="Search\SearchConfiguration.cs" />
-    <Compile Include="Search\SearchAPIResponse.cs" />
-    <Compile Include="Search\ShowSources.cs" />
-    <Compile Include="Utils\EnumExtensions.cs" />
-    <Compile Include="Utils\TolerantStringEnumConverter.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+
 </Project>
