@@ -110,8 +110,4 @@ UpgradeLog*.XML
 MSTest.*
 
 *.nupkg
-/packages/FileHelpers.3.4.1/lib/net40/FileHelpers.dll
-/packages/FileHelpers.3.4.1/lib/net40/FileHelpers.xml
-/packages/FileHelpers.3.4.1/lib/net45/FileHelpers.dll
-/packages/FileHelpers.3.4.1/lib/net45/FileHelpers.xml
-/packages/FileHelpers.3.4.1/lib/netstandard2.0/FileHelpers.dll
+/packages/*
