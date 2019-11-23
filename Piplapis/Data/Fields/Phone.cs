@@ -75,24 +75,9 @@ namespace Pipl.APIs.Data.Fields
             {
 
                 if (!string.IsNullOrEmpty(Raw)) return true;
-
-                bool tIsNOTSearchable = false;
-                string tCountryCode = CountryCode.ToString();
-                string tNumber = Number.ToString();
-  
-                tCountryCode = tCountryCode.Replace("+", "");
-                if (tCountryCode != "" && (!int.TryParse(tCountryCode, out int i))) tIsNOTSearchable = true;
-                if (tCountryCode.Length > 3) tIsNOTSearchable = true;
-                if (CountryCode < 0) tIsNOTSearchable = true;
-
-                tNumber = tNumber.Replace("+", "");
-                if (!long.TryParse(tNumber, out long l)) { tIsNOTSearchable = true; }
-                if (tNumber.Length < 7) { tIsNOTSearchable = true; }
-                if (Number < 0) tIsNOTSearchable = true;
-
-                if (tIsNOTSearchable) return false;
-                else return true;
-                
+                if (CountryCode == null && Number >= 99999999) return true;
+                if (CountryCode != null && CountryCode>0 && CountryCode <=999 && Number >= 999999) return true;
+                return false;  
                    
             }
         }
