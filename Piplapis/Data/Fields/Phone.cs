@@ -73,8 +73,12 @@ namespace Pipl.APIs.Data.Fields
         {
             get
             {
-                return (!string.IsNullOrEmpty(Raw)) || 
-                       (Number != null && (CountryCode == null || CountryCode >= 0 && CountryCode < 999));
+
+                if (!string.IsNullOrEmpty(Raw)) return true;
+                if (CountryCode == null && Number >= 99999999) return true;
+                if (CountryCode != null && CountryCode>0 && CountryCode <=999 && Number >= 999999) return true;
+                return false;  
+                   
             }
         }
 

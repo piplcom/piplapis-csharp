@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29215.179
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Piplapis", "Piplapis\Piplapis.csproj", "{E9921187-C395-422D-844A-6136C55CD6BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Piplapis", "Piplapis\Piplapis.csproj", "{E9921187-C395-422D-844A-6136C55CD6BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{D7E2E676-B827-47EE-B82A-89686DB6D00F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTests", "UnitTests\UnitTests.csproj", "{D7E2E676-B827-47EE-B82A-89686DB6D00F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
