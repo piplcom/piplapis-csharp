@@ -89,9 +89,9 @@ namespace Pipl.APIs.Data.Fields
         {
             get
             {
-                return ((!String.IsNullOrEmpty(First) && _nonAbc.Replace(First, string.Empty).Length >= 2) &&
-                        (!String.IsNullOrEmpty(Last) && _nonAbc.Replace(Last, string.Empty).Length >= 2)) ||
-                        (!String.IsNullOrEmpty(Raw) && _nonAbc.Replace(Raw, string.Empty).Length >= 4);
+                return ((!String.IsNullOrEmpty(First) && _nonAbc.Replace(First, string.Empty).Length >= 1) &&
+                        (!String.IsNullOrEmpty(Last) && _nonAbc.Replace(Last, string.Empty).Length >= 1)) ||
+                        (!String.IsNullOrEmpty(Raw) && _nonAbc.Replace(Raw, string.Empty).Length >= 1);
             }
         }
     }
