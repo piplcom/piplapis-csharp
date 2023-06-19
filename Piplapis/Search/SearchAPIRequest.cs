@@ -31,9 +31,9 @@ namespace Pipl.APIs.Search
         public static SearchConfiguration DefaultConfiguration;
 
         // HTTP URL
-        private static string BaseUrlHttp = "http://api.pipl.com/search/?";
+        private static string BaseUrlHttp = "http://qa-api.pipl.pro/apis/gateway/search/?";
         // HTTPS is also supported:
-        private static string BaseUrlHttpS = "https://api.pipl.com/search/?";
+        private static string BaseUrlHttpS = "https://qa-api.pipl.pro/apis/gateway/search/?";
 
         private static string ClientUserAgent;
 
