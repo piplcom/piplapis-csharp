@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 
 using Pipl.APIs.Search;
 using Pipl.APIs.Data.Fields;
+using Pipl.APIs.Data.Containers;
 
 namespace UnitTests
 {
@@ -71,9 +72,41 @@ namespace UnitTests
             Assert.IsNotNull(response.PossiblePersons);
             Assert.IsTrue(response.PossiblePersons.Any());
 
-            var vehicles = response.PossiblePersons[0].Vehicles;
+            Person person = response.PossiblePersons[0];
 
-            Assert.IsTrue(vehicles.Any());
+            Assert.IsTrue(person.Vehicles.Any());
+        }
+
+        [TestMethod]
+        public void TestEmailType(){
+            SearchAPIRequest request = new SearchAPIRequest(email: "garth.moulton@pipl.com");
+
+            SearchAPIResponse response = request.Send();
+
+            Assert.IsNotNull(response.Person);
+            Assert.IsTrue(response.Person.Vehicles.Any());
+            Assert.IsTrue(response.AvailableData.Premium.WorkEmails > 0);
+            Assert.IsTrue(response.AvailableData.Premium.PersonalEmails > 0);
+        }
+
+        [TestMethod]
+        public void TestVoipMatchRequirements(){
+            SearchAPIRequest request = new SearchAPIRequest(email: "vrajajee@yahoo.com");
+            request.Configuration.MatchRequirements = "phone.voip";
+
+            SearchAPIResponse response = request.Send();
+
+            Assert.IsNotNull(response.Person);
+            Assert.IsTrue(response.PersonsCount > 0);
+            Assert.IsTrue(response.AvailableData.Premium.VoipPhones > 0);
+            Assert.IsTrue(response.Person.Phones.Any(phone => phone.Voip == true));
+
+            request = new SearchAPIRequest(email: "garth.moulton@pipl.com");
+            request.Configuration.MatchRequirements = "phone.voip";
+
+            response = request.Send();
+
+            Assert.IsTrue(response.PersonsCount == 0);
         }
     }
 }
