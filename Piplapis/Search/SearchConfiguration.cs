@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Pipl.APIs.Search
 {
     public class SearchConfiguration
     {
         public string ApiKey { get; set; }
+        public float ApiVersion { get; set; }
         public float? MinimumProbability { get; set; }
         public ShowSources? ShowSources { get; set; }
         public bool? HideSponsored { get; set; }
@@ -47,15 +45,68 @@ namespace Pipl.APIs.Search
          *                          returned as a match. For example: "personal_profiles" or "personal_profiles or professional_and_business"
          */
 
-        public const String DefaultApiKey = "";
+        public static string defaultApiKey = "";
+        public static string defaultApiUrl = "";
+        private static float defaultApiVersion = 5;
 
-        public SearchConfiguration(string apiKey = SearchConfiguration.DefaultApiKey,
-                                float? minimumProbability = null, ShowSources? showSources = null,
-                                bool? hideSponsored = null, bool? liveFeeds = null, float? minimumMatch = null,
-                                bool useHttps = true, string matchRequirements = null, bool? inferPersons = false,
-                                string sourceCategoryRequirements = null, string url = null, bool? topMatch = false)
-        {
-            this.ApiKey = apiKey;
+        protected string GetApiKey(string apiKey){
+            if(apiKey != null){
+                return apiKey;
+            }
+
+            string apiEnvKey = Environment.GetEnvironmentVariable("PIPL_API_KEY");
+
+            if(apiEnvKey != null){
+                return apiEnvKey;
+            }
+
+            return SearchConfiguration.defaultApiKey;
+        }
+
+        protected string GetUrl(string url){
+            if(url != null){
+                return url;
+            }
+
+            string apiUrl = Environment.GetEnvironmentVariable("PIPL_API_URL");
+
+            if(apiUrl != null){
+                return apiUrl;
+            }
+
+            return SearchConfiguration.defaultApiUrl;
+        }
+
+        protected float GetApiVersion(float? apiVersion){
+            if(apiVersion != null){
+                return (float) apiVersion;
+            }
+
+            string apiVersionString = Environment.GetEnvironmentVariable("PIPL_API_VERSION");
+
+            if(apiVersionString != null){
+                return float.Parse(apiVersionString);
+            }
+
+            return SearchConfiguration.defaultApiVersion;
+        }
+
+        public SearchConfiguration(
+            string apiKey = null,
+            float? minimumProbability = null,
+            ShowSources? showSources = null,
+            bool? hideSponsored = null, 
+            bool? liveFeeds = null, 
+            float? minimumMatch = null,
+            bool useHttps = true, 
+            string matchRequirements = null, 
+            bool? inferPersons = false,
+            string sourceCategoryRequirements = null, 
+            string url = null, 
+            bool? topMatch = false,
+            float? apiVersion = null
+        ){
+            this.ApiKey = this.GetApiKey(apiKey);
             this.MinimumProbability = minimumProbability;
             this.ShowSources = showSources;
             this.HideSponsored = hideSponsored;
@@ -66,7 +117,8 @@ namespace Pipl.APIs.Search
             this.MatchRequirements = matchRequirements;
             this.TopMatch = topMatch;
             this.SourceCategoryRequirements = sourceCategoryRequirements;
-            this.Url = url;
+            this.Url = this.GetUrl(url);
+            this.ApiVersion = GetApiVersion(apiVersion);
         }
     }
 }

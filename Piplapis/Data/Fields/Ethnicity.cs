@@ -29,7 +29,7 @@ namespace Pipl.APIs.Data.Fields
          *            `validSince` is a <code>DateTime</code> object, it's the first
          *            time Pipl's crawlers found this data on the page.
          */
-        public Ethnicity(EthnicityTypes? content = null, DateTime? validSince = null)
+        public Ethnicity(EthnicityTypes? content = null, string? validSince = null)
             : base(validSince)
         {
             this.Content = content;

@@ -45,9 +45,13 @@ namespace Pipl.APIs.Data.Fields
          *            EmailProvider: is this a public provider such as gmail/outlook. 
          *            Only shown when true
          */
-        public Email(string address = null, string addressMd5 = null, EmailTypes? type = null, 
-            bool? disposable = null, bool? email_provider = null,
-            DateTime? validSince = null)
+        public Email(
+            string address = null,
+            string addressMd5 = null, 
+            EmailTypes? type = null, 
+            bool? disposable = null, 
+            bool? email_provider = null,
+            string? validSince = null)
             : base(validSince)
         {
             this.Address = address;

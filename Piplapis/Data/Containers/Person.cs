@@ -27,7 +27,7 @@ namespace Pipl.APIs.Data.Containers
     public class Person : FieldsContainer
     {
         [JsonProperty("relationships")]
-        public List<Relationship> Relationships { get; set; }
+        public List<Relationship>? Relationships { get; set; }
 
         [JsonProperty("@id")]
         public string Id { get; set; }
@@ -38,7 +38,7 @@ namespace Pipl.APIs.Data.Containers
         [JsonProperty("@search_pointer")]
         public string SearchPointer { get; set; }
 
-        [JsonProperty("@inferred")]
+        [JsonIgnore]
         public bool Inferred { get; set; }
 
         /**
@@ -50,15 +50,16 @@ namespace Pipl.APIs.Data.Containers
          * @param @match             Match (float)
          * @param @search_pointer    SearchPointer - For PossiblePerson only
          */
-        public Person(IEnumerable<Field> fields = null, bool? queryParamsMatch = null,
-            string id = null, float? match = null, string search_pointer = null)
-            : base(fields)
-        {
-            Relationships = new List<Relationship>();
-
+        public Person(
+            IEnumerable<Field> fields = null,
+            bool? queryParamsMatch = null,
+            string id = null, 
+            float? match = null, 
+            string search_pointer = null
+        ): base(fields){
+            this.Relationships = null;
             this.Id = id;
             this.Match = match;
-
             this.SearchPointer = search_pointer;
         }
 
@@ -75,56 +76,85 @@ namespace Pipl.APIs.Data.Containers
                 {
                     return true;
                 }
-                foreach (Fields.Name name in this.Names)
-                {
-                    if (name.IsSearchable)
+
+                if(this.Names != null){
+                    foreach (Fields.Name name in this.Names)
                     {
-                        return true;
-                    }
-                }
-                foreach (Fields.Email email in this.Emails)
-                {
-                    if (email.IsSearchable)
-                    {
-                        return true;
-                    }
-                }
-                foreach (Fields.Phone phone in this.Phones)
-                {
-                    if (phone.IsSearchable)
-                    {
-                        return true;
-                    }
-                }
-                foreach (Fields.Username username in this.Usernames)
-                {
-                    if (username.IsSearchable)
-                    {
-                        return true;
-                    }
-                }
-                foreach (Fields.UserID userid in this.UserIDs)
-                {
-                    if (userid.IsSearchable)
-                    {
-                        return true;
-                    }
-                }
-                foreach (Fields.URL url in this.Urls)
-                {
-                    if (url.IsSearchable)
-                    {
-                        return true;
-                    }
-                }
-                foreach (Fields.Address address in this.Addresses)
-                {
-                    if (address.IsSoleSearchable)
-                    {
-                        return true;
+                        if (name.IsSearchable)
+                        {
+                            return true;
+                        }
                     }
                 }
 
+                if(this.Emails != null){
+                    foreach (Fields.Email email in this.Emails){
+                        if (email.IsSearchable){
+                            return true;
+                        }
+                    }
+                }
+
+                if(this.UserIDs != null){
+                    foreach (Fields.UserID userid in this.UserIDs)
+                    {
+                        if (userid.IsSearchable)
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                if(this.Vehicles != null){
+                    foreach (Fields.Vehicle vehicle in this.Vehicles)
+                    {
+                        if (vehicle.IsSearchable)
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                if(this.Phones != null){
+                    foreach (Fields.Phone phone in this.Phones)
+                    {
+                        if (phone.IsSearchable)
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                if(this.Usernames != null){
+                    foreach (Fields.Username username in this.Usernames)
+                    {
+                        if (username.IsSearchable)
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                if(this.Urls != null){
+                    foreach (Fields.URL url in this.Urls)
+                    {
+                        if (url.IsSearchable)
+                        {
+                            return true;
+                        }
+                    }
+                }
+
+                if(this.Addresses != null){
+                    foreach (Fields.Address address in this.Addresses)
+                    {
+                        if (address.IsSoleSearchable)
+                        {
+                            return true;
+                        }
+                    }
+                }
+                
                 return false;
             }
         }

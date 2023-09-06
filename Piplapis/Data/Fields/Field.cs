@@ -13,10 +13,10 @@ namespace Pipl.APIs.Data.Fields
     public class Field
     {
         [JsonProperty("@valid_since")]
-        public DateTime? ValidSince { get; set; }
+        public string? ValidSince { get; set; }
 
         [JsonProperty("@last_seen")]
-        public DateTime? LastSeen { get; set; }
+        public string? LastSeen { get; set; }
 
         [JsonProperty("@current")]
         public bool? Current { get; set; }
@@ -24,7 +24,7 @@ namespace Pipl.APIs.Data.Fields
         [JsonProperty("@inferred")]
         public bool? Inferred { get; set; }
 
-        public Field(DateTime? validSince = null, bool? inferred = null)
+        public Field(string? validSince = null, bool? inferred = null)
         {
             this.ValidSince = validSince;
             this.Inferred = inferred;

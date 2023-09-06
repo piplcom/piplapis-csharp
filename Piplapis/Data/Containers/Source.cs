@@ -59,7 +59,7 @@ namespace Pipl.APIs.Data.Containers
 
         // TODO: still needed?
         [JsonProperty("@valid_since")]
-        public DateTime? ValidSince { get; set; }
+        public string? ValidSince { get; set; }
 
         /**
          * @param fields             A List of <code>Field</code> objects
@@ -78,7 +78,7 @@ namespace Pipl.APIs.Data.Containers
         public Source(IEnumerable<Field> fields, 
             string person_id, string id, bool sponsored, string origin_url, string name,
             SourceCategories? category, string domain, float match, bool premium,
-            DateTime validSince)
+            string validSince)
             : base(fields) 
         {
             Tags = new List<Tag>();
@@ -106,6 +106,7 @@ namespace Pipl.APIs.Data.Containers
             }
         }
 
+        [JsonIgnore]
         public override IEnumerable<Field> AllFields
         {
             get

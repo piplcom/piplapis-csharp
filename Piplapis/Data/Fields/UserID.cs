@@ -20,7 +20,7 @@ namespace Pipl.APIs.Data.Fields
         [JsonProperty("content")]
         public string Content { get; set; }
 
-        public UserID(string content = null, DateTime? validSince = null)
+        public UserID(string content = null, string? validSince = null)
             : base(validSince)
         {
             this.Content = content;

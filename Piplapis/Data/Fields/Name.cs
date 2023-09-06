@@ -59,7 +59,7 @@ namespace Pipl.APIs.Data.Fields
          *            time Pipl's crawlers found this data on the page.
          */
         public Name(string prefix = null, string first = null, string middle = null, string last = null,
-                string suffix = null, string raw = null, NameTypes? type = null, DateTime? validSince = null)
+                string suffix = null, string raw = null, NameTypes? type = null, string? validSince = null)
             : base(validSince)
         {
             this.Prefix = prefix;
