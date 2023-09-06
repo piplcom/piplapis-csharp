@@ -159,13 +159,12 @@ namespace Pipl.APIs.Data.Fields
             bool condition = (
                 !String.IsNullOrEmpty(vin) &&
                 vin.Length == 17 &&
-                vin.ToLower().IndexOfAny("ioq".ToCharArray()) != -1 &&
-                "uz0".IndexOfAny(new char[] {vin.ToLower()[9]}) != -1 &&
+                vin.ToLower().IndexOfAny("ioq".ToCharArray()) == -1 &&
+                "uz0".IndexOfAny(new char[] {vin.ToLower()[9]}) == -1 &&
                 Utils.IsAlpheNumeric(vin) &&
                 Vehicle.ValidateVinChecksum(vin)
             );
             
-
             return condition;
         }
 

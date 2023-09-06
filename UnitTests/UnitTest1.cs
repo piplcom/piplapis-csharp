@@ -1,4 +1,5 @@
-﻿using System;
+﻿using System.Linq;
+using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
 using System.Threading.Tasks;
@@ -58,6 +59,21 @@ namespace UnitTests
         public async Task TestSearch2()
         {
             await TestRequest("data2.json", "original_data2.json", "vrajajee@yahoo.com");
+        }
+
+
+        [TestMethod]
+        public void TestSearchWithVin(){
+            SearchAPIRequest request = new SearchAPIRequest(vin: "1GNDT13WXN2203169");
+
+            SearchAPIResponse response = request.Send();
+
+            Assert.IsNotNull(response.PossiblePersons);
+            Assert.IsTrue(response.PossiblePersons.Any());
+
+            var vehicles = response.PossiblePersons[0].Vehicles;
+
+            Assert.IsTrue(vehicles.Any());
         }
     }
 }
