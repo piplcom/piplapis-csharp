@@ -152,12 +152,28 @@ namespace Pipl.APIs.Search
          * @param searchPointer     A search pointer (from a Possible Person object), to be used for drill-down searches.                         
          * @param requestConfiguration      RequestConfiguration object. If null, the default RequestConfiguration object is used               
          */
-        public SearchAPIRequest(string firstName = null, string middleName = null,
-                                string lastName = null, string rawName = null, string email = null, string phone = null,
-                                string username = null, string vin = null ,string country = null, string state = null, string city = null, string zipCode = null,
-                                string rawAddress = null, int? fromAge = null, int? toAge = null, Person person = null, 
-                                string searchPointer = null, SearchConfiguration requestConfiguration = null)
-        {
+        public SearchAPIRequest(
+            string firstName = null,
+            string middleName = null,
+            string lastName = null,
+            string rawName = null, 
+            string email = null, 
+            string phone = null,
+            string username = null, 
+            string vin = null, 
+            string country = null, 
+            string state = null, 
+            string city = null, 
+            string zipCode = null,
+            string rawAddress = null, 
+            int? fromAge = null, 
+            int? toAge = null, 
+            Person person = null, 
+            string searchPointer = null,
+            string url = null,
+            string user_id = null,
+            SearchConfiguration requestConfiguration = null
+        ){
             SetBaseConfiguration(requestConfiguration);
 
             List<Field> fields = new List<Field>();
@@ -186,6 +202,14 @@ namespace Pipl.APIs.Search
             if (!String.IsNullOrEmpty(vin))
             {
                 fields.Add(new Vehicle(vin));
+            }
+            if (!String.IsNullOrEmpty(url))
+            {
+                fields.Add(new URL(url));
+            }
+            if (!String.IsNullOrEmpty(user_id))
+            {
+                fields.Add(new UserID(user_id));
             }
             if (!String.IsNullOrEmpty(country) || !String.IsNullOrEmpty(state) || !String.IsNullOrEmpty(city) || !String.IsNullOrEmpty(zipCode))
             {
