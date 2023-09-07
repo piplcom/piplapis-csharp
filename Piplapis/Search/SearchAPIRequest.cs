@@ -203,14 +203,14 @@ namespace Pipl.APIs.Search
             {
                 fields.Add(new Vehicle(vin));
             }
-            if (!String.IsNullOrEmpty(url))
-            {
-                fields.Add(new URL(url));
-            }
-            if (!String.IsNullOrEmpty(user_id))
-            {
-                fields.Add(new UserID(user_id));
-            }
+            // if (!String.IsNullOrEmpty(url))
+            // {
+            //     fields.Add(new URL(url));
+            // }
+            // if (!String.IsNullOrEmpty(user_id))
+            // {
+            //     fields.Add(new UserID(user_id));
+            // }
             if (!String.IsNullOrEmpty(country) || !String.IsNullOrEmpty(state) || !String.IsNullOrEmpty(city) || !String.IsNullOrEmpty(zipCode))
             {
                 fields.Add(new Address(country: country, state: state, city: city, zip_code: zipCode));
