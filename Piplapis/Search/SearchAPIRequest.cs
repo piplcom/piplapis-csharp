@@ -104,9 +104,12 @@ namespace Pipl.APIs.Search
         protected void SetBaseConfiguration(SearchConfiguration requestConfiguration){
             if (requestConfiguration != null){
                 Configuration = requestConfiguration;
+                
+                return;
             }
-
+            
             Configuration = new SearchConfiguration();
+
         }
 
         /**
