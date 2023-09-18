@@ -33,7 +33,7 @@ namespace Pipl.APIs.Data.Fields
 	     * @param classification
 	     *            classification of tag
 	     */
-        public Tag(string content = null, string classification = null, DateTime? validSince = null)
+        public Tag(string content = null, string classification = null, string? validSince = null)
             : base(validSince)
         {
             this.Content = content;

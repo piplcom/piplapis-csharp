@@ -42,7 +42,7 @@ namespace Pipl.APIs.Data.Fields
          *            held this job.
          */
         public Job(string title = null, string organization = null, string industry = null, DateRange dateRange = null,
-            DateTime? validSince = null)
+            string? validSince = null)
             : base(validSince)
         {
             this.Title = title;

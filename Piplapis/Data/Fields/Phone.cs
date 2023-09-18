@@ -35,6 +35,12 @@ namespace Pipl.APIs.Data.Fields
         [JsonProperty("@type")]
         public PhoneTypes? Type { get; set; }
 
+        [JsonProperty("@do_not_call")]
+        public bool? DoNotCall { get; set; }
+
+        [JsonProperty("@voip")]
+        public bool? Voip { get; set; }
+
         /**
          * @param validSince
          *            `validSince` is a <code>DateTime</code> object, it's the first
@@ -51,15 +57,23 @@ namespace Pipl.APIs.Data.Fields
          * @param raw
          *            `raw` is an unparsed phone
          */
-        public Phone(int? countryCode = null, long? number = null, int? extension = null,
-                PhoneTypes? type = null, string raw = null, DateTime? validSince = null)
-            : base(validSince)
-        {
+        public Phone(
+            int? countryCode = null,
+            long? number = null,
+            int? extension = null,
+            PhoneTypes? type = null, 
+            string raw = null, 
+            string? validSince = null,
+            bool? DoNotCall = null,
+            bool? Voip = null
+        ): base(validSince){
             this.CountryCode = countryCode;
             this.Number = number;
             this.Extension = extension;
             this.Type = type;
             this.Raw = raw;
+            this.DoNotCall = DoNotCall;
+            this.Voip = Voip;
         }
 
         /**

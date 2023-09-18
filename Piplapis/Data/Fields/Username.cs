@@ -28,7 +28,7 @@ namespace Pipl.APIs.Data.Fields
          * @param content
          *            `content` is the Username itself.
          */
-        public Username(string content = null, DateTime? validSince = null)
+        public Username(string content = null, string? validSince = null)
             : base(validSince)
         {
             this.Content = content;

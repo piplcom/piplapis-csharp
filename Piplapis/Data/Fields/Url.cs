@@ -26,6 +26,9 @@ namespace Pipl.APIs.Data.Fields
         [JsonProperty("url")]
         public string Url { get; set; }
 
+        [JsonProperty("@source_id")]
+        public string? SourceId { get; set; }
+
         /**
          * @param @sponsered
          *            Sponsered. if false omitted
@@ -37,20 +40,27 @@ namespace Pipl.APIs.Data.Fields
          *            Category 
          * @param url
          *            Url
+         * @param SourceId
+                    @source_id
          * @param validSince
          *            `validSince` is a <code>DateTime</code> object, it's the first
          *            time Pipl's crawlers found this data on the page.
          */
-        public URL(bool? sponsered = null, string domain = null, string name = null,
-            string category = null, string url = null,
-            DateTime? validSince = null)
-            : base(validSince)
-        {
+        public URL(
+            bool? sponsered = null, 
+            string domain = null, 
+            string name = null,
+            string category = null, 
+            string url = null,
+            string? validSince = null,
+            string? SourceId = null
+        ): base(validSince){
             this.Sponsored = sponsered;
             this.Domain = domain;
             this.Name = name;
             this.Category = category;
             this.Url = url;
+            this.SourceId = SourceId;
         }
 
         public override string ToString()

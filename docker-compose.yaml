@@ -1,0 +1,19 @@
+version: '3'
+
+services:
+  django:
+    restart: on-failure
+    image: piplsearch/csharp-sdk:development
+    build:
+      context: .
+      dockerfile: local_testing/Dockerfile
+    command: bash -c "tail -f /dev/null"
+    tty: true
+    stdin_open: true
+    volumes:
+      - .:/sdk
+      - ./publish:/sdk/publish
+    env_file:
+      - .env
+    ports:
+      - '3999:3999'

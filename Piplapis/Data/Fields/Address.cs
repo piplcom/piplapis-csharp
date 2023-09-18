@@ -81,7 +81,7 @@ namespace Pipl.APIs.Data.Fields
          */
         public Address(string country = null, string state = null, string city = null, string poBox = null,
                 string street = null, string house = null, string apartment = null, string raw = null,
-                AddressTypes? type = null, string zip_code = null, DateTime? validSince = null)
+                AddressTypes? type = null, string zip_code = null, string? validSince = null)
             : base(validSince)
         {
             this.Country = country;

@@ -49,5 +49,11 @@ namespace Pipl.APIs.Data
             return !String.IsNullOrEmpty(url) && Uri.TryCreate(url, UriKind.Absolute, out uri) ;
 	    }
 
+
+        public static bool IsAlpheNumeric(string str){
+            return !String.IsNullOrEmpty(str) && str.All(
+                current_char => Char.IsLetterOrDigit(current_char)
+            );
+        }
     }
 }

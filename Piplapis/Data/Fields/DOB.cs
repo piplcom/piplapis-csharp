@@ -16,6 +16,10 @@ namespace Pipl.APIs.Data.Fields
     {
         [JsonProperty("date_range")]
         public DateRange DateRange { get; set; }
+        
+        
+        [JsonProperty("display")]
+        public string Display { get; private set; } 
 
         /**
          * @param validSince `validSince` is a <code>Date</code> object, it's the first time Pipl's
@@ -23,10 +27,16 @@ namespace Pipl.APIs.Data.Fields
          * @param dateRange  `dateRange` is A DateRange object (Pipl.APIs.Data.Fields.DateRange),
          *                   the date-of-birth is within this range.
          */
-        public DOB(DateRange dateRange = null, DateTime? validSince = null)
+        public DOB(DateRange dateRange = null, string? validSince = null)
             : base(validSince)
         {
             this.DateRange = dateRange;
+            this.Display = GetDisplay();
+        }
+
+
+        public string GetDisplay(){
+            return Age.ToString() + " years old";
         }
 
         [JsonIgnore]

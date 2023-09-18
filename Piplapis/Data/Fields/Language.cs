@@ -11,7 +11,7 @@ namespace Pipl.APIs.Data.Fields
      */
     public class Language : Field
     {
-        [JsonProperty("languageCode")]
+        [JsonProperty("language")]
         public string LanguageCode { get; set; }
 
         [JsonProperty("region")]
@@ -30,7 +30,7 @@ namespace Pipl.APIs.Data.Fields
          *            time Pipl's crawlers found this data on the page.
          */
         public Language(string languageCode = null, string region = null, 
-            DateTime? validSince = null)
+            string? validSince = null)
             : base(validSince)
         {
             this.LanguageCode = languageCode;

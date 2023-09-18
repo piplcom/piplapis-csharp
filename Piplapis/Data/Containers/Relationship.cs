@@ -19,6 +19,13 @@ namespace Pipl.APIs.Data.Fields
         [JsonProperty("@subtype")]
         public string Subtype { get; set; }
 
+
+        [JsonProperty("@valid_since")]
+        public string? ValidSince { get; set; }
+
+        [JsonProperty("@last_seen")]
+        public string? LastSeen { get; set; }
+
         /**
          * @param fields             
          *            A List of <code>Field</code> objects
@@ -31,13 +38,17 @@ namespace Pipl.APIs.Data.Fields
          *            subtype can be "Father", "Mother", "Son" and many other
          *            things).
          */
-        public Relationship(IEnumerable<Field> fields = null, 
-            RelationshipTypes? type = null, string subtype = null)
-            : base(fields)
-            // TODO: removed ValidSince
-        {
+        public Relationship(
+            IEnumerable<Field> fields = null, 
+            RelationshipTypes? type = null, 
+            string subtype = null,
+            string? ValidSince = null,
+            string? LastSeen = null
+            ): base(fields){
             this.Type = type;
             this.Subtype = subtype;
+            this.ValidSince = ValidSince;
+            this.LastSeen = LastSeen;
         }
 
         public override string ToString()

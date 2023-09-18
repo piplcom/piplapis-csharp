@@ -35,7 +35,7 @@ namespace Pipl.APIs.Data.Fields
          * @param thumbnail_token
          *            ThumbnailToken. token for thumbnail server
          */
-        public Image(string url = null, string thumbnailToken = null, DateTime? validSince = null)
+        public Image(string url = null, string thumbnailToken = null, string? validSince = null)
             : base(validSince)
         {
             this.Url = url;

@@ -28,30 +28,21 @@ namespace Pipl.APIs.Search
     {
         #region Static
 
-        public static SearchConfiguration DefaultConfiguration;
+        public static Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+        private static string ClientUserAgent = string.Format(
+            "piplapis/csharp/{0}.{1}.{2}",
+            SearchAPIRequest.version.Major,
+            SearchAPIRequest.version.Minor,
+            SearchAPIRequest.version.Build
+        );
 
-        // HTTP URL
-        private static string BaseUrlHttp = "http://api.pipl.com/search/?";
-        // HTTPS is also supported:
-        private static string BaseUrlHttpS = "https://api.pipl.com/search/?";
-
-        private static string ClientUserAgent;
-
-        // static CTOR
-        static SearchAPIRequest()
-        {
-            DefaultConfiguration = new SearchConfiguration();
-            Version version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-            ClientUserAgent = string.Format("piplapis/csharp/{0}.{1}.{2}", version.Major, version.Minor, version.Build);
-
-        }
 
         #endregion
 
         
         public Person Person { get; set; }
 
-        public SearchConfiguration Configuration;
+        public SearchConfiguration Configuration = null;
 
         /**
          * The URL of the request (as a string).
@@ -62,16 +53,7 @@ namespace Pipl.APIs.Search
         [JsonIgnore]
         public string Url { get; private set; }
 
-        public SearchConfiguration EffectiveConfiguration
-        {
-            get
-            {
-                if (Configuration != null)
-                    return Configuration;
 
-                return DefaultConfiguration;
-            }
-        }
 
         /**
          * The parameters of the request (as a NameValueCollection).
@@ -83,40 +65,51 @@ namespace Pipl.APIs.Search
         {
             var res = new NameValueCollection();
 
-            res.Add("key", (String.IsNullOrEmpty(EffectiveConfiguration.ApiKey) ? SearchConfiguration.DefaultApiKey : EffectiveConfiguration.ApiKey));
+            res.Add("key", Configuration.ApiKey);
             res.Add("person", JsonConvert.SerializeObject(Person, Formatting.None, new JsonSerializerSettings { NullValueHandling = NullValueHandling.Ignore }));
-            if (EffectiveConfiguration.MinimumProbability != null)
-                res.Add("minimum_probability", ((float)EffectiveConfiguration.MinimumProbability).ToString(CultureInfo.CreateSpecificCulture("en-US")));
-            if (EffectiveConfiguration.ShowSources.HasValue)
-                res.Add("show_sources", EnumExtensions.JsonEnumName(EffectiveConfiguration.ShowSources.Value));
-            if (EffectiveConfiguration.HideSponsored != null)
-                res.Add("hide_sponsored", EffectiveConfiguration.HideSponsored.ToString());
-            if (EffectiveConfiguration.LiveFeeds != null)
-                res.Add("live_feeds", EffectiveConfiguration.LiveFeeds.ToString());
+            if (Configuration.MinimumProbability != null)
+                res.Add("minimum_probability", ((float)Configuration.MinimumProbability).ToString(CultureInfo.CreateSpecificCulture("en-US")));
+            if (Configuration.ShowSources.HasValue)
+                res.Add("show_sources", EnumExtensions.JsonEnumName(Configuration.ShowSources.Value));
+            if (Configuration.HideSponsored != null)
+                res.Add("hide_sponsored", Configuration.HideSponsored.ToString());
+            if (Configuration.LiveFeeds != null)
+                res.Add("live_feeds", Configuration.LiveFeeds.ToString());
             if (!String.IsNullOrEmpty(Person.SearchPointer))
                 res.Add("search_pointer", Person.SearchPointer);
-            if (EffectiveConfiguration.MinimumMatch != null){
-                res.Add("minimum_match", ((float) EffectiveConfiguration.MinimumMatch).ToString(CultureInfo.CreateSpecificCulture("en-US")));
+            if (Configuration.MinimumMatch != null){
+                res.Add("minimum_match", ((float) Configuration.MinimumMatch).ToString(CultureInfo.CreateSpecificCulture("en-US")));
             }
-            if (EffectiveConfiguration.InferPersons != null)
+            if (Configuration.InferPersons != null)
             {
-                res.Add("infer_persons", EffectiveConfiguration.InferPersons.ToString());
+                res.Add("infer_persons", Configuration.InferPersons.ToString());
             }
-            if (EffectiveConfiguration.MatchRequirements != null)
+            if (Configuration.MatchRequirements != null)
             {
-                res.Add("match_requirements", EffectiveConfiguration.MatchRequirements);
+                res.Add("match_requirements", Configuration.MatchRequirements);
             }
-            if (EffectiveConfiguration.TopMatch != null)
+            if (Configuration.TopMatch != null)
             {
-                res.Add("top_match", EffectiveConfiguration.TopMatch.ToString());
+                res.Add("top_match", Configuration.TopMatch.ToString());
             }
-            if (EffectiveConfiguration.SourceCategoryRequirements != null)
+            if (Configuration.SourceCategoryRequirements != null)
             {
-                res.Add("source_category_requirements", EffectiveConfiguration.SourceCategoryRequirements);
+                res.Add("source_category_requirements", Configuration.SourceCategoryRequirements);
             }
                 
 
             return res;
+        }
+
+        protected void SetBaseConfiguration(SearchConfiguration requestConfiguration){
+            if (requestConfiguration != null){
+                Configuration = requestConfiguration;
+                
+                return;
+            }
+            
+            Configuration = new SearchConfiguration();
+
         }
 
         /**
@@ -151,6 +144,7 @@ namespace Pipl.APIs.Search
          * @param rawAddress        An unparsed address
          * @param fromAge           fromAge
          * @param toAge             toAge
+         * @param vin               vehicle
          * @param person            A Person object (Pipl.APIs.Data.Person).
          *                          The Person can contain every field allowed by the data-model
          *                          (see Pipl.APIs.Data.Fields) and can hold multiple fields of
@@ -158,13 +152,29 @@ namespace Pipl.APIs.Search
          * @param searchPointer     A search pointer (from a Possible Person object), to be used for drill-down searches.                         
          * @param requestConfiguration      RequestConfiguration object. If null, the default RequestConfiguration object is used               
          */
-        public SearchAPIRequest(string firstName = null, string middleName = null,
-                                string lastName = null, string rawName = null, string email = null, string phone = null,
-                                string username = null, string country = null, string state = null, string city = null, string zipCode = null,
-                                string rawAddress = null, int? fromAge = null, int? toAge = null, Person person = null, 
-                                string searchPointer = null, SearchConfiguration requestConfiguration = null)
-        {
-            Configuration = requestConfiguration;
+        public SearchAPIRequest(
+            string firstName = null,
+            string middleName = null,
+            string lastName = null,
+            string rawName = null, 
+            string email = null, 
+            string phone = null,
+            string username = null, 
+            string vin = null, 
+            string country = null, 
+            string state = null, 
+            string city = null, 
+            string zipCode = null,
+            string rawAddress = null, 
+            int? fromAge = null, 
+            int? toAge = null, 
+            Person person = null, 
+            string searchPointer = null,
+            string url = null,
+            string user_id = null,
+            SearchConfiguration requestConfiguration = null
+        ){
+            SetBaseConfiguration(requestConfiguration);
 
             List<Field> fields = new List<Field>();
 
@@ -189,6 +199,18 @@ namespace Pipl.APIs.Search
             {
                 fields.Add(new Username(username));
             }
+            if (!String.IsNullOrEmpty(vin))
+            {
+                fields.Add(new Vehicle(vin));
+            }
+            // if (!String.IsNullOrEmpty(url))
+            // {
+            //     fields.Add(new URL(url));
+            // }
+            // if (!String.IsNullOrEmpty(user_id))
+            // {
+            //     fields.Add(new UserID(user_id));
+            // }
             if (!String.IsNullOrEmpty(country) || !String.IsNullOrEmpty(state) || !String.IsNullOrEmpty(city) || !String.IsNullOrEmpty(zipCode))
             {
                 fields.Add(new Address(country: country, state: state, city: city, zip_code: zipCode));
@@ -213,14 +235,10 @@ namespace Pipl.APIs.Search
             this.Person = person;
             Person.AddFields(fields);
 
-            if (String.IsNullOrEmpty(EffectiveConfiguration.Url))
-            {
-                Url = (EffectiveConfiguration.UseHttps) ? BaseUrlHttpS : BaseUrlHttp;
-            }
-            else
-            {
-                Url = EffectiveConfiguration.Url;
-            }
+            
+            string prefix = Configuration.UseHttps ? "https://" : "http://";
+            
+            Url = String.Format("{0}{1}v{2}/?", prefix, Configuration.Url, Configuration.ApiVersion);
         }
 
 
@@ -235,24 +253,24 @@ namespace Pipl.APIs.Search
          */
         public void ValidateQueryParams(bool strict = true)
         {
-            if (String.IsNullOrEmpty(EffectiveConfiguration.ApiKey) && String.IsNullOrEmpty(SearchConfiguration.DefaultApiKey))
+            if (String.IsNullOrEmpty(Configuration.ApiKey) && String.IsNullOrEmpty(SearchConfiguration.defaultApiKey))
             {
                 throw new ArgumentException("API key is missing");
             }
-            if ((EffectiveConfiguration.MinimumProbability != null) && (EffectiveConfiguration.MinimumProbability < 0 || EffectiveConfiguration.MinimumProbability > 1))
+            if ((Configuration.MinimumProbability != null) && (Configuration.MinimumProbability < 0 || Configuration.MinimumProbability > 1))
             {
                 throw new ArgumentException("minimum_probability must have a value between 0 and 1");
             }
             if (!Person.IsSearchable)
             {
-                throw new ArgumentException("No valid name/username/userid/phone/email/url in request");
+                throw new ArgumentException("No valid name/username/userid/phone/email/url/address/vin in request");
             }
             if (strict && Person.UnsearchableFields.Count() > 0)
             {
                 var unsearchableFields = from field in Person.UnsearchableFields select field.Repr();
                 throw new ArgumentException("Some fields are unsearchable: " + String.Join(", ", unsearchableFields));
             }
-            if ((EffectiveConfiguration.MinimumMatch != null) && (EffectiveConfiguration.MinimumMatch < 0 || EffectiveConfiguration.MinimumMatch > 1))
+            if ((Configuration.MinimumMatch != null) && (Configuration.MinimumMatch < 0 || Configuration.MinimumMatch > 1))
             {
                 throw new ArgumentException("minimum_match must have a value between 0 and 1");
             }

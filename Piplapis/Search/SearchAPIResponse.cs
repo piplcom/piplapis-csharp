@@ -57,13 +57,22 @@ namespace Pipl.APIs.Search
         [JsonProperty("available_data")]
         public AvailableData AvailableData { get; set; }
 
+        [JsonProperty("@http_status_code")]
+        public int HttpStatusCode { get; set; }
+        
+        [JsonProperty("@available_sources")]
+        public int AvailableSources { get; set; }
+
+        [JsonProperty("@visible_sources")]
+        public int VisibleSources { get; set; }
+
         [JsonProperty("warnings")]
         public List<string> Warnings { get; set; }
 
         [JsonProperty("match_requirements")]
         public string MatchRequirements { get; set; }
 
-        [JsonProperty("top_match")]
+        [JsonIgnore]
         public bool TopMatch { get; set; }
 
         [JsonProperty("source_category_requirements")]
@@ -75,28 +84,40 @@ namespace Pipl.APIs.Search
         [JsonProperty("@persons_count")]
         public int PersonsCount { get; set; }
 
+        [JsonIgnore]
         public string RawJSON { get; set; }
 
+        [JsonIgnore]
         public int? QpsAllotted { get; set; }
 
+        [JsonIgnore]
         public int? QpsCurrent { get; set; }
 
+        [JsonIgnore]
         public int? QuotaAllotted { get; set; }
 
+        [JsonIgnore]
         public int? QuotaCurrent { get; set; }
 
+        [JsonIgnore]
         public DateTime? QuotaReset { get; set; }
 
+        [JsonIgnore]
         public int? QpsLiveAllotted { get; set; }
 
+        [JsonIgnore]
         public int? QpsLiveCurrent { get; set; }
 
+        [JsonIgnore]
         public int? QpsDemoAllotted { get; set; }
 
+        [JsonIgnore]
         public int? QpsDemoCurrent { get; set; }
 
+        [JsonIgnore]
         public int? DemoUsageAlloted { get; set; }
 
+        [JsonIgnore]
         public int? DemoUsageCurrent { get; set; }
 
         public DateTime? DemoUsageExpiry { get; set; }
@@ -113,15 +134,22 @@ namespace Pipl.APIs.Search
          * 
          * @param @persons_count     int. The number of persons in this response.
          */
-        public SearchAPIResponse(Person query = null, Person person = null, List<Person> possible_Persons = null, List<Source> sources = null,
-                                 List<string> warnings = null, string searchId = null, int? personsCount = null)
-        {
+        public SearchAPIResponse(
+            Person query = null,
+            Person person = null, 
+            List<Person> possible_Persons = null, 
+            List<Source> sources = null,
+            List<string> warnings = null, 
+            string searchId = null, 
+            int? personsCount = null
+            ){
             this.Query = query;
             this.Person = person;
             this.PossiblePersons = possible_Persons;
             this.Sources = sources;
             this.Warnings = warnings;
             this.SearchId = searchId;
+            
             if (personsCount == null)
             {
                 if (this.Person != null) {
@@ -130,6 +158,7 @@ namespace Pipl.APIs.Search
                     personsCount = this.PossiblePersons == null ? 0 : this.PossiblePersons.Count();
                 }
             }
+            
             this.PersonsCount = (int)personsCount;
             this.RawJSON = null;
             this.QpsAllotted = null;
@@ -155,6 +184,8 @@ namespace Pipl.APIs.Search
             return Sources.ToLookup(s => s.Domain);
         }
 
+        
+        [JsonIgnore]
         public Address Address
         {
             get
@@ -164,6 +195,7 @@ namespace Pipl.APIs.Search
             }
         }
 
+        [JsonIgnore]
         public DOB DOB
         {
             get
@@ -173,6 +205,7 @@ namespace Pipl.APIs.Search
             }
         }
 
+        [JsonIgnore]
         public Education Education
         {
             get
@@ -182,6 +215,7 @@ namespace Pipl.APIs.Search
             }
         }
 
+        [JsonIgnore]
         public Email Email
         {
             get
@@ -191,6 +225,7 @@ namespace Pipl.APIs.Search
             }
         }
 
+        [JsonIgnore]
         public Ethnicity Ethnicitiy
         {
             get
@@ -200,6 +235,7 @@ namespace Pipl.APIs.Search
             }
         }
 
+        [JsonIgnore]
         public Gender Gender
         {
             get
@@ -209,6 +245,7 @@ namespace Pipl.APIs.Search
             }
         }
 
+        [JsonIgnore]
         public Image Image
         {
             get
@@ -218,6 +255,7 @@ namespace Pipl.APIs.Search
             }
         }
 
+        [JsonIgnore]
         public Job Job
         {
             get
@@ -227,6 +265,7 @@ namespace Pipl.APIs.Search
             }
         }
 
+        [JsonIgnore]
         public Language Language
         {
             get
@@ -236,6 +275,7 @@ namespace Pipl.APIs.Search
             }
         }
 
+        [JsonIgnore]
         public Name Name
         {
             get
@@ -245,6 +285,7 @@ namespace Pipl.APIs.Search
             }
         }
 
+        [JsonIgnore]
         public OriginCountry OriginCountry
         {
             get
@@ -254,6 +295,7 @@ namespace Pipl.APIs.Search
             }
         }
 
+        [JsonIgnore]
         public Phone Phone
         {
             get
@@ -263,6 +305,7 @@ namespace Pipl.APIs.Search
             }
         }
 
+        [JsonIgnore]
         public URL Url
         {
             get
@@ -272,6 +315,7 @@ namespace Pipl.APIs.Search
             }
         }
 
+        [JsonIgnore]
         public UserID UserID
         {
             get
@@ -281,6 +325,7 @@ namespace Pipl.APIs.Search
             }
         }
 
+        [JsonIgnore]
         public Username Username
         {
             get
@@ -289,7 +334,21 @@ namespace Pipl.APIs.Search
                 return Person.Usernames.FirstOrDefault();
             }
         }
+        
+        [JsonIgnore]
+        public Vehicle Vehicle
+        {
+            get
+            {
+                if ((Person == null) || (Person.Vehicles == null)){
+                    return null;
+                } 
 
+                return Person.Vehicles.FirstOrDefault();
+            }
+        }
+
+        [JsonIgnore]
         public Relationship Relationship
         {
             get

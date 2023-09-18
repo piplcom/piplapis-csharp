@@ -31,7 +31,7 @@ namespace Pipl.APIs.Data.Fields
          * @param dateRange  `dateRange` is A <code>DateRange</code> object (Pipl.APIs.Data.Fields.DateRange),
          *                   that's the time the person was studying.
          */
-        public Education(string degree = null, string school = null, DateRange dateRange = null, DateTime? validSince = null)
+        public Education(string degree = null, string school = null, DateRange dateRange = null, string? validSince = null)
             : base(validSince)
         {
             this.Degree = degree;
