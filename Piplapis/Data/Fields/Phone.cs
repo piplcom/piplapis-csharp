@@ -64,7 +64,8 @@ namespace Pipl.APIs.Data.Fields
             PhoneTypes? type = null, 
             string raw = null, 
             string? validSince = null,
-            bool? DoNotCall = null
+            bool? DoNotCall = null,
+            bool? Voip = null
         ): base(validSince){
             this.CountryCode = countryCode;
             this.Number = number;
@@ -72,6 +73,7 @@ namespace Pipl.APIs.Data.Fields
             this.Type = type;
             this.Raw = raw;
             this.DoNotCall = DoNotCall;
+            this.Voip = Voip;
         }
 
         /**
