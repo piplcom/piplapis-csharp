@@ -9,8 +9,9 @@ This is a .NET client library for easily integrating Pipl's APIs into your appli
 Library Requirements
 --------------------
 
-* Newtonsoft Json.NET, you can find it inside this project under `packages/Newtonsoft.Json.4.5.11/` or download from [here](http://json.codeplex.com/releases/view/97986), or execute this NuGet command: `Install-Package Newtonsoft.Json -Version 4.5.11`.
-* The library was tested on .NET v4.0 and should work on later versions as well
+* Newtonsoft Json.NET, you can find it inside this project under `packages/Newtonsoft.Json.13.0.1/` or download from [here](http://json.codeplex.com/releases/view/97986), or execute this NuGet command: `Install-Package Newtonsoft.Json -Version 13.0.1`.
+* The library was tested on .NET v6.0 and should work on later versions as well
+
 
 Installation
 ------------
