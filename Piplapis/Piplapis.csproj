@@ -6,10 +6,10 @@
     <AssemblyName>piplclient</AssemblyName>
     <Version>5.10.0</Version>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
-    <PackageId>piplapis-csharp</PackageId>
+    <PackageId>piplclient</PackageId>
     <Authors>Pipl</Authors>
     <Company>Pipl</Company>
-    <Product>piplapis-csharp</Product>
+    <Product>piplclient</Product>
     <Copyright>Copyright © Pipl 2016</Copyright>
     <PackageProjectUrl>http://pipl.com/dev</PackageProjectUrl>
     <PackageReleaseNotes>Switch to .net standard</PackageReleaseNotes>
