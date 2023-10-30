@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using Newtonsoft.Json;
@@ -16,7 +16,9 @@ using System.Globalization;
 
 namespace Pipl.APIs.Search
 {
-    /**
+	using System.Threading;
+
+	/**
      * A request to Pipl's Search API.
      * <p/>
      * Sending the request and getting the response is very simple and can be done
@@ -344,20 +346,22 @@ namespace Pipl.APIs.Search
          * Send the request and return the response or raise SearchAPIError.
          * <p/>
          *
+         * @param cancellationToken		A CancellationToken to be used to cancel the operation.
          * @param strictValidation      A bool argument that's passed to the
          *                              validateQueryParams method.
          * @return A task that runs the request asyncronously
          * @throws ArgumentException    Raises ArgumentException (raised from validateQueryParams)
          * @throws IOException          IOException
          */
-        public Task<SearchAPIResponse> SendAsync(bool strictValidation = true)
+        public Task<SearchAPIResponse> SendAsync(CancellationToken cancellationToken, bool strictValidation = true)
         {
-            ValidateQueryParams(strictValidation);
+			ValidateQueryParams(strictValidation);
             TaskCompletionSource<SearchAPIResponse> taskCompletionSource = new TaskCompletionSource<SearchAPIResponse>();
 
             using (WebClient client = new WebClient())
             {
-                client.Headers.Add("User-Agent", ClientUserAgent);
+	            cancellationToken.Register(client.CancelAsync);
+				client.Headers.Add("User-Agent", ClientUserAgent);
                 Uri uri = new Uri(Url);
                 client.UploadValuesCompleted += (s, e) =>
                 {
@@ -367,6 +371,24 @@ namespace Pipl.APIs.Search
             }
 
             return taskCompletionSource.Task;
+        }
+		
+        /**
+         * Overload of SendAsync() to support older code without CancellationToken.
+         * <p/>
+         *
+         * @param strictValidation      A bool argument that's passed to the
+         *                              validateQueryParams method.
+         * @return A task that runs the request asyncronously
+         * @throws ArgumentException    Raises ArgumentException (raised from validateQueryParams)
+         * @throws IOException          IOException
+         */
+		public Task<SearchAPIResponse> SendAsync(bool strictValidation = true)
+        {
+	        using (CancellationTokenSource cancellationTokenSource = new CancellationTokenSource())
+	        {
+		        return SendAsync(cancellationTokenSource.Token, strictValidation);
+	        }
         }
 
         private void _searchUploadValuesCompletedEventHandler(WebClient client, UploadValuesCompletedEventArgs e, TaskCompletionSource<SearchAPIResponse> taskCompletionSource)
