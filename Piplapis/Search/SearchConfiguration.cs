@@ -46,7 +46,7 @@ namespace Pipl.APIs.Search
          */
 
         public static string defaultApiKey = "";
-        public static string defaultApiUrl = "";
+        public static string defaultApiUrl = "api.pipl.com/search/";
         private static float defaultApiVersion = 5;
 
         protected string GetApiKey(string apiKey){

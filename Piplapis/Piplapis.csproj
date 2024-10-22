@@ -14,6 +14,7 @@
     <PackageProjectUrl>http://pipl.com/dev</PackageProjectUrl>
     <PackageReleaseNotes>Switch to .net standard</PackageReleaseNotes>
     <Nullable>enable</Nullable>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
