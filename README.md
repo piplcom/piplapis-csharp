@@ -3,8 +3,8 @@ pipl .NET (C#) Library
 
 This is a .NET client library for easily integrating Pipl's APIs into your application.
 
-* Full details about Pipl's People Data API - [http://pipl.com/dev](http://pipl.com/dev)  
-* This library is available in other languages - [http://pipl.com/dev/guide/code_libraries](http://pipl.com/dev/guide/code_libraries)
+* Full details about Pipl's People Data API - [https://docs.pipl.com/docs/welcome-to-the-pipl-search-api](https://docs.pipl.com/docs/welcome-to-the-pipl-search-api)
+* This library is available in other languages - [https://docs.pipl.com/docs/code-libraries](https://docs.pipl.com/docs/code-libraries)
 
 Library Requirements
 --------------------
@@ -26,6 +26,6 @@ Getting Started & Code Snippets
 -------------------------------
 
 **Pipl's Search API**
-* API Portal - [https://pipl.com/api/](https://pipl.com/api/)
+* API Developer Portal - [https://search.pipl.com/api/](https://search.pipl.com/api/)
 * Code snippets - [https://docs.pipl.com/docs/code-snippets](https://docs.pipl.com/docs/code-snippets)
 * Full reference - [https://docs.pipl.com/reference/](https://docs.pipl.com/reference/)
