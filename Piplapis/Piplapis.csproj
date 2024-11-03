@@ -4,14 +4,14 @@
     <TargetFramework>netcoreapp6</TargetFramework>
     <RootNamespace>Pipl.APIs</RootNamespace>
     <AssemblyName>piplclient</AssemblyName>
-    <Version>5.10.0</Version>
+    <Version>5.10.1</Version>
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
     <PackageId>piplclient</PackageId>
     <Authors>Pipl</Authors>
     <Company>Pipl</Company>
     <Product>piplclient</Product>
-    <Copyright>Copyright © Pipl 2016</Copyright>
-    <PackageProjectUrl>http://pipl.com/dev</PackageProjectUrl>
+    <Copyright>Copyright © Pipl 2024</Copyright>
+    <PackageProjectUrl>http://search.pipl.com/</PackageProjectUrl>
     <PackageReleaseNotes>Switch to .net standard</PackageReleaseNotes>
     <Nullable>enable</Nullable>
     <PackageReadmeFile>README.md</PackageReadmeFile>
