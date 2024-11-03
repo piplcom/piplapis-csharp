@@ -11,10 +11,9 @@
     <Company>Pipl</Company>
     <Product>piplclient</Product>
     <Copyright>Copyright © Pipl 2024</Copyright>
-    <PackageProjectUrl>http://search.pipl.com/</PackageProjectUrl>
+    <PackageProjectUrl>https://search.pipl.com/</PackageProjectUrl>
     <PackageReleaseNotes>Switch to .net standard</PackageReleaseNotes>
     <Nullable>enable</Nullable>
-    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
